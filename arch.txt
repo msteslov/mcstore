@@ -1,0 +1,72 @@
+TOKEN - токен бота
+ADMIN_ID - айди админа(главный доступ)
+GROUP_ID - айди группы для логов
+IP_PORT - адрес в пормате ip:port
+
+
+# КОМАНДЫ
+/start -> message
+/auth [auth_code] -> create_prof/acc/username/gencode -> message
+
+
+# ХЭНДЛЕРЫ ТЕКСТА
+старт -> basic keyboard
+создать карту -> create_card (1 = free, next = (cards_count - 1) * 5)
+
+account.json:
+user_id:
+    list cards;
+    list last_transactions;         //last 5 transactions
+    int count_transactions;
+    int balance;
+    int count_cards;                
+    string role;                    // admin, bank, user
+    string user;                    //tg username
+    string main_card;               //first maden card
+    string UUID;                    //game uuid
+    string name;                    //game nickname
+
+cards.json:
+card.id:
+    int balance;
+    list last_transactions;
+    int count_transactions;
+    string user;
+    string name;
+    string uuid;
+
+transactions.json:
+transaction.id:
+    string from;
+    string from_card;
+    string to;
+    string to_card;
+    int amount;
+    string date;
+    string message;
+    string id;
+    string type;
+    int status;
+
+usernames.json:
+username(tg):
+    string user_id;
+    string UUID;
+    string name;
+
+gameacc.json:
+name:
+    string name;
+    string uuid;
+    string user_id;
+    string username;
+
+
+1. /перевести [.gamename/,card_id/@username] [.gamename/,card_id/@username] message amount
+2. /перевести -a [.gamename/,card_id/@username] message amount
+
+1 - общая команда, так же актуальна и для перевода между своими картами(комиссия не взимается)
+    для перевода на чужие счета первые 192 без комиссии, потом +10 к каждому переводу, если без подписки.
+
+2 - команда только для ролей банк и админ. Обязательно должно быть -а, сумма последним аргументом. Перевод
+    осуществляется из казны. Сообщение необязательно, осуществляется без комиссии

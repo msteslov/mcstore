@@ -1,0 +1,14 @@
+{
+    "0": {
+        "from": "ss8mmm",
+        "from_card": "z",
+        "to": "ss8mmm",
+        "to_card": "0000",
+        "amount": 1,
+        "date": "date",
+        "type": "пополнение",
+        "id": "_0",
+        "status": 1,
+        "message": ""
+    }
+}
