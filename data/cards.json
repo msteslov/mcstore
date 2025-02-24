@@ -1,20 +1,78 @@
 {
     "z": {
         "balance": 9999997989,
-        "last_transactions": [
-        ],
+        "last_transactions": [],
         "count_transactions": 12,
         "user": "1461832447",
         "name": "server",
         "uuid": "000"
     },
     "0000": {
-        "balance": 99944693,
+        "balance": 99943694,
         "last_transactions": [
+            2
         ],
-        "count_transactions": 28,
+        "count_transactions": 29,
         "user": "1461832447",
         "name": "tinterer",
         "uuid": "qweqweqe"
+    },
+    "0002": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1461832447",
+        "name": "tinterer",
+        "uuid": "qweqweqe"
+    },
+    "0003": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1461832447",
+        "name": "tinterer",
+        "uuid": "qweqweqe"
+    },
+    "0004": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1461832447",
+        "name": "tinterer",
+        "uuid": "qweqweqe"
+    },
+    "0005": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1461832447",
+        "name": "tinterer",
+        "uuid": "qweqweqe"
+    },
+    "0006": {
+        "balance": 999,
+        "last_transactions": [
+            2
+        ],
+        "count_transactions": 1,
+        "user": "813373727",
+        "name": "",
+        "uuid": "9678e464-8674-4896-a972-e89536f83602"
+    },
+    "0007": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "5690683710",
+        "name": "",
+        "uuid": "2aeb4a97-e55e-4d4b-8248-2dfcf7439c03"
+    },
+    "0008": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1138827235",
+        "name": "",
+        "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb"
     }
 }
