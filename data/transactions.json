@@ -10,5 +10,17 @@
         "id": "_0",
         "status": 1,
         "message": ""
+    },
+    "1": {
+        "from": "tinterer",
+        "from_card": "0000",
+        "to": "LogikaCode",
+        "to_card": "0006",
+        "amount": 999,
+        "date": "date",
+        "type": "Перевод",
+        "id": "_1",
+        "status": 1,
+        "message": ""
     }
 }

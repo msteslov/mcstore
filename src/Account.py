@@ -24,6 +24,7 @@ USERNAME_DEFAULT = {
     "name": ""
 }
 GAMEACC_DEFAULT = {
+    "name": "",
     "uuid": "",
     "user_id": "",
     "username": ""
