@@ -320,8 +320,9 @@ async def cmd_activate(message: types.Message):
             '\t/activate [ref_code]'
             'Нельзя вводить собственный код, также вы должны сыграть на сервере 5+ часов!'
             )
-    elif int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 >= 0 and\
-        Ref.activate_code(str(message.from_user.id), ars[1]):
+    elif int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 >= 5 and\
+        Ref.activate_code(str(message.from_user.id), ars[1]) and\
+            int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 <= 50:
         await message.answer(f'Реферальный код активирован! ')
 
     else:
@@ -392,8 +393,6 @@ def get_card(value):
     else: return False
     return card_id
 
-# @dp.message(Command('штраф'))
-# async def 
 
 @dp.message(Command('перевести', 'trans'))
 async def cmd_trans(message: types.Message):
@@ -464,7 +463,20 @@ async def cmd_shtraf(message: types.Message):
 
     ars = message.text.split()
 
-    if len(ars) < 2: await message.answer('/штраф @username [message] [amount]\nСообщение опционально')
+    if len(ars) < 2: await message.answer('/штраф gamename [message] [amount]\nКомментарий к штрафу опционален')
+    elif len(ars) > 4: await message.answer('/штраф gamename [message] [amount]\nКомментарий к штрафу опционален')
+    else:
+
+        amount = ars[-1]
+        messge = ars[2] if len(ars) == 4 else ''
+
+        tr = Bank.top_up(get_card(ars[1]), 'z', messge, amount, 'Штраф')
+        if tr:
+            await message.answer(f'Пользователь был оштрафован на {amount}. Его баланс составляет {Account.get_prof(Account.get_acc_by_name(ars[1][1::])["user_id"])["balance"]}')
+            await bot.send_message(Account.get_acc_by_name(ars[1][1::])['user_id'], f'Вы были оштрафованы на {amount}')
+        else:
+            await message.answer(f'Возникла ошибка')
+        
 
 
 @dp.message(Command('начать_работу', 'begin'))

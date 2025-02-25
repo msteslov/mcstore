@@ -5,18 +5,21 @@
             "0002",
             "0003",
             "0004",
-            "0005"
+            "0005",
+            "0009"
         ],
         "last_transactions": [
+            5,
             2,
             3,
+            6,
             3,
             4,
             4
         ],
-        "count_transactions": 10,
-        "balance": 133267.0,
-        "count_cards": 5,
+        "count_transactions": 12,
+        "balance": 133237.0,
+        "count_cards": 6,
         "role": "admin",
         "user": "ss8mmm",
         "main_card": "0000",
@@ -28,14 +31,17 @@
     },
     "813373727": {
         "cards": [
-            "0006"
+            "0006",
+            "0010"
         ],
         "last_transactions": [
-            2
+            2,
+            5,
+            6
         ],
-        "count_transactions": 1,
-        "balance": 0,
-        "count_cards": 1,
+        "count_transactions": 3,
+        "balance": 4990,
+        "count_cards": 2,
         "role": "user",
         "user": "logikacode",
         "main_card": "0006",

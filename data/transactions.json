@@ -46,5 +46,29 @@
         "id": "_3",
         "status": 1,
         "message": ""
+    },
+    "4": {
+        "from": "tinterer",
+        "from_card": "z",
+        "to": "LogikaCode",
+        "to_card": "0006",
+        "amount": 1000,
+        "date": "date",
+        "type": "адм.перевод",
+        "id": "_4",
+        "status": 1,
+        "message": ""
+    },
+    "5": {
+        "from": "LogikaCode",
+        "from_card": "0006",
+        "to": "tinterer",
+        "to_card": "z",
+        "amount": 1000,
+        "date": "date",
+        "type": "Штраф",
+        "id": "_5",
+        "status": 1,
+        "message": ""
     }
 }

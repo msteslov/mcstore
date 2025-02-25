@@ -2,6 +2,8 @@ import datetime
 import json
 import random
 
+from src import Bank
+
 PROF_DEFAULT = {
     "cards": [],
     "last_transactions": [],
@@ -216,5 +218,31 @@ def make_card(user_id, name, uuid):
     return id
 
 
+def create_card(user_id):
 
+    with open('data/account.json', 'r', encoding = 'utf-8') as file:
+        users = json.load(file)
+
+    with open('data/cards.json', 'r', encoding = 'utf-8') as file2:
+        cards = json.load(file2)
+
+    id = str(len(cards))
+    while len(id) < 4:
+        id = '0' + id
+
+    if id not in cards:
+        if users[user_id]['cards']: #if card not first
+            if Bank.bank_info(users[user_id]['main_card'])['balance'] < (len(users[user_id]['cards']) - 1) * 5:
+                return False
+            else:
+                cards[id] = CARD_DEFAULT
+                users[user_id]['cards'].append(id)
+                cards[id]['user'] = str(user_id)
+                cards[id]['name'] = get_acc(user_id)['name']
+                cards[id]['uuid'] = get_acc[user_id]['uuid']
+                
+
+    else:
+        return make_card(user_id)
+    return id
     

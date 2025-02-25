@@ -160,7 +160,7 @@ def top_up(from_card, to_card, message, amount, type):
 
     with open('data/account.json', 'r', encoding = 'utf-8') as file2:
         users = json.load(file2)
-
+    print(cards[from_card]['balance'])
     if cards[from_card]['balance'] < amount:
         return -1
     elif cards[from_card]['balance'] >= amount:
