@@ -8,9 +8,13 @@
             "0005"
         ],
         "last_transactions": [
-            2
+            2,
+            3,
+            3,
+            4,
+            4
         ],
-        "count_transactions": 6,
+        "count_transactions": 10,
         "balance": 133267.0,
         "count_cards": 5,
         "role": "admin",

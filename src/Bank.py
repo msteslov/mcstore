@@ -127,9 +127,9 @@ def top_up_adm(sender, username, amount, message):
         user2['count_transactions'] += 1
         user2_card['count_transactions'] += 1
         user1['count_transactions'] += 1
-        user2['last_transactions'].insert(len(user2['last_transactions']) % 10, trans)
-        user2_card['last_transactions'].insert(len(user2_card['last_transactions']) % 10, trans) 
-        user1['last_transactions'].insert(len(user1['last_transactions']) % 10, trans)
+        user2['last_transactions'].insert(len(user2['last_transactions']) % 5, trans)
+        user2_card['last_transactions'].insert(len(user2_card['last_transactions']) % 5, trans) 
+        user1['last_transactions'].insert(len(user1['last_transactions']) % 5, trans)
 
         with open('data/account.json', 'r', encoding = 'utf-8') as file:
             data = json.load(file)
@@ -169,21 +169,23 @@ def top_up(from_card, to_card, message, amount, type):
         if not tr: return 0
 
         cards[from_card]['balance'] -= amount
-        cards[from_card]['last_transactions'].append(tr)
+        cards[from_card]['last_transactions'].insert(len(cards[from_card]['last_transactions']) % 5, tr)
         cards[from_card]['count_transactions'] += 1
 
         cards[to_card]['balance'] += amount
-        cards[to_card]['last_transactions'].append(tr)
+        cards[to_card]['last_transactions'].insert(len(cards[to_card]['last_transactions']) % 5, tr)
         cards[to_card]['count_transactions'] += 1
 
         user1 = cards[from_card]['user']
         user2 = cards[to_card]['user']
 
-        users[user1]['last_transactions'].append(tr)
-        users[user1]['balance'] += amount
-
-        users[user2]['last_transactions'].append(tr)
+        users[user1]['last_transactions'].insert(len(users[user1]['last_transactions']) % 5, tr)
         users[user2]['count_transactions'] += 1
+        users[user1]['balance'] -= amount
+
+        users[user2]['last_transactions'].insert(len(users[user1]['last_transactions']) % 5, tr)
+        users[user2]['count_transactions'] += 1
+        users[user2]['balance'] += amount
 
         with open('data/cards.json', 'w', encoding = 'utf-8') as file:
             json.dump(cards, file, ensure_ascii=False, indent=4)

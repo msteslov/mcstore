@@ -22,5 +22,29 @@
         "id": "_1",
         "status": 1,
         "message": ""
+    },
+    "2": {
+        "from": "tinterer",
+        "from_card": "z",
+        "to": "tinterer",
+        "to_card": "0000",
+        "amount": 2,
+        "date": "date",
+        "type": "адм.перевод",
+        "id": "_2",
+        "status": 1,
+        "message": ""
+    },
+    "3": {
+        "from": "tinterer",
+        "from_card": "z",
+        "to": "tinterer",
+        "to_card": "0002",
+        "amount": 1000,
+        "date": "date",
+        "type": "адм.перевод",
+        "id": "_3",
+        "status": 1,
+        "message": ""
     }
 }

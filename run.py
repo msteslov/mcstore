@@ -243,7 +243,7 @@ async def cmd_prof(message: types.Message):
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
         await message.answer(
             f'*Профиль пользователя* {name}\n\n'
-            f'Баланс: {prof["balance"]}\n'
+            f'Баланс: {int(prof["balance"]) // 64} ст. {int(prof["balance"]) % 64} \n'
             f'Количество карт: {prof["count_cards"]}\n'
             f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
             f'Роль: {prof["role"]}\n',
@@ -252,7 +252,7 @@ async def cmd_prof(message: types.Message):
     else:
         await message.answer(
             f'*Профиль пользователя* {name}\n\n'
-            f'Баланс: {prof["balance"]}\n'
+            f'Баланс: {int(prof["balance"]) % 64} ст.\n'
             f'Количество карт: {prof["count_cards"]}\n'
             f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
             f'Роль: {prof["role"]}\n',
@@ -268,7 +268,7 @@ async def cb_card(call: types.CallbackQuery):
         kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Назад', callback_data='back')]])
         await call.message.edit_text(
             f'*Информация о карте* {card_id}\n\n'
-            f'Баланс: {pool["balance"]}\n'
+            f'Баланс: {int(pool["balance"]) % 64} ст.\n'
             f'Последние транзакции: {pool["last_transactions"]}\n'
             f'Количество транзакций: {pool["count_transactions"]}\n'
             f'Пользователь: {user}\n',
@@ -286,7 +286,7 @@ async def cb_card(call: types.CallbackQuery):
             kb = InlineKeyboardMarkup(inline_keyboard=kb)
             await call.message.edit_text(
                 f'*Профиль пользователя* {call.from_user.first_name}\n\n'
-                f'Баланс: {prof["balance"]}\n'
+                f'Баланс: {int(prof["balance"]) % 64} ст.\n'
                 f'Количество карт: {prof["count_cards"]}\n'
                 f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
                 f'Роль: {prof["role"]}\n',
@@ -296,7 +296,7 @@ async def cb_card(call: types.CallbackQuery):
         else:
             await call.message.edit_text(
                 f'*Профиль пользователя* {call.from_user.first_name}\n\n'
-                f'Баланс: {prof["balance"]}\n'
+                f'Баланс: {int(prof["balance"]) % 64} ст.\n'
                 f'Количество карт: {prof["count_cards"]}\n'
                 f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
                 f'Роль: {prof["role"]}\n',
@@ -326,7 +326,6 @@ async def cmd_activate(message: types.Message):
 
     else:
         await message.answer('Возникла ошибка!')
-        
 
 
 @dp.message(Command("создать_карту", "make_card"))
@@ -402,7 +401,7 @@ async def cmd_trans(message: types.Message):
     /перевести [,card_id/empty] [.gamename/,card_id/@username] message amount
     '''
     ars = message.text.split(' ')
-    if int(ars[-1][1::]) < 0:
+    if int(ars[-1]) < 0:
         await message.answer('Сумма должна быть больше 0!')
         return
     
@@ -459,6 +458,13 @@ async def cmd_trans(message: types.Message):
             await message.answer(f'Перевод осуществлен успешно. Транзакция №{tr}')
         else:
             await message.answer('Произошла ошибка')
+
+@dp.message(Command('штраф'))
+async def cmd_shtraf(message: types.Message):
+
+    ars = message.text.split()
+
+    if len(ars) < 2: await message.answer('/штраф @username [message] [amount]\nСообщение опционально')
 
 
 @dp.message(Command('начать_работу', 'begin'))

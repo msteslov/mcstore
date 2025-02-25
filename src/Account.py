@@ -15,7 +15,9 @@ PROF_DEFAULT = {
     "name": "",
     "code": "",
     "invites": 0,
-    "invited": 0
+    "invited": 0,
+    "trans_limit": 192,
+    "bank_premium": 0
 }
 
 USERNAME_DEFAULT = {
