@@ -19,7 +19,6 @@ from aiogram.enums import ParseMode
 logging.basicConfig(level=logging.INFO)
 
 # Параметры бота и глобальные переменные (интеграция telebot-логики)
-TOKEN = "Token"
 ADMIN_ID = 813373727  # Замените на ID создателя бота
 GROUP_ID = -1002480162505 #For logs
 IP_PORT = '65.108.206.102:25648' #address
@@ -174,7 +173,7 @@ async def cmd_start(message: types.Message):
 async def btn_create_card(message: types.Message):
     acc = Account.get_acc(message.from_user.id)
     if acc:
-        card_id = Account.make_card(message.from_user.id, acc['name'], acc['uuid'])
+        card_id = Account.create_card(message.from_user.id)
         if card_id:
             await message.answer(f'Карта успешно создана\n*ID карты:* {card_id}', parse_mode=ParseMode.MARKDOWN)
             await bot.send_message(
@@ -195,7 +194,7 @@ async def btn_prof(message: types.Message):
         return
     profile_text = (
         f'*Профиль пользователя* {message.from_user.first_name}\n\n'
-        f'Баланс: {prof["balance"]}\n'
+        f'Баланс: {int(prof["balance"]) // 64} ст. {int(prof["balance"]) % 64}\n'
         f'Количество карт: {prof["count_cards"]}\n'
         f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
         f'Роль: {prof["role"]}\n'
@@ -268,7 +267,7 @@ async def cb_card(call: types.CallbackQuery):
         kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Назад', callback_data='back')]])
         await call.message.edit_text(
             f'*Информация о карте* {card_id}\n\n'
-            f'Баланс: {int(pool["balance"]) % 64} ст.\n'
+            f'Баланс: {int(pool["balance"]) % 64} ст. {int(pool["balance"]) % 64}\n'
             f'Последние транзакции: {pool["last_transactions"]}\n'
             f'Количество транзакций: {pool["count_transactions"]}\n'
             f'Пользователь: {user}\n',
@@ -286,7 +285,7 @@ async def cb_card(call: types.CallbackQuery):
             kb = InlineKeyboardMarkup(inline_keyboard=kb)
             await call.message.edit_text(
                 f'*Профиль пользователя* {call.from_user.first_name}\n\n'
-                f'Баланс: {int(prof["balance"]) % 64} ст.\n'
+                f'Баланс: {int(prof["balance"]) % 64} ст. {int(prof["balance"]) % 64}\n'
                 f'Количество карт: {prof["count_cards"]}\n'
                 f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
                 f'Роль: {prof["role"]}\n',
@@ -296,12 +295,63 @@ async def cb_card(call: types.CallbackQuery):
         else:
             await call.message.edit_text(
                 f'*Профиль пользователя* {call.from_user.first_name}\n\n'
-                f'Баланс: {int(prof["balance"]) % 64} ст.\n'
+                f'Баланс: {int(prof["balance"]) % 64} ст. {int(prof["balance"]) % 64}\n'
                 f'Количество карт: {prof["count_cards"]}\n'
                 f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
                 f'Роль: {prof["role"]}\n',
                 parse_mode=ParseMode.MARKDOWN
             )
+
+
+@dp.message(Command('server', 'сервер', 'казна', 'budg'))
+async def cmd_server(message: types.Message):
+    if Account.get_prof(message.from_user.id)['role'] in ['admin', 'bank', 'stuff']:
+        pool = Account.get_prof('server')
+        await message.answer(
+            f'Баланс сервера: {int(pool["balance"]) % 64} ст. {int(pool["balance"]) % 64}'
+        )
+    else:
+        message.answer('Недостаточно прав доступа')
+
+@dp.message(Command('tup_serv', 'тупс'))
+async def cmd_tupc(message: types.Message):
+
+    ars = message.text.split(' ')
+    if len(ars) != 2: await message.answer('/tup_server [amount]')
+    if int(ars[-1]): amount = int(ars[-1])
+    else: await message.answer('/tup_server [amount]')
+    if Account.get_prof(message.from_user.id)['role'] in ['admin', 'bank']:
+        if Bank.tups(amount):
+            await message.answer('Баланс сервера пополнен')
+        else: await message.answer('Возникла ошибка')
+    else:
+        message.answer('Недостаточно прав доступа')
+
+@dp.message(Command('access', 'доступ'))
+async def cmd_access(message: types.Message):
+
+    ars = message.text.split(' ')
+    if len(ars) != 2: await message.answer('/access [username]')
+    if ars[-1]: username = ars[-1]
+
+    if Account.get_prof(message.from_user.id)['role'] == 'admin':
+        if Account.dostup(username):
+            await message.answer(f'{username} получил доступ')
+        else:
+            await message.answer('Возникла ошибка')
+
+@dp.message(Command('unaccess', 'недоступ'))
+async def cmd_access(message: types.Message):
+
+    ars = message.text.split(' ')
+    if len(ars) != 2: await message.answer('/unaccess [username]')
+    if ars[-1]: username = ars[-1]
+
+    if Account.get_prof(message.from_user.id)['role'] == 'admin':
+        if Account.nedostup(username):
+            await message.answer(f'{username} утратил доступ')
+        else:
+            await message.answer('Возникла ошибка')
 
 
 @dp.message(Command('пкд', 'get_code'))
@@ -320,9 +370,9 @@ async def cmd_activate(message: types.Message):
             '\t/activate [ref_code]'
             'Нельзя вводить собственный код, также вы должны сыграть на сервере 5+ часов!'
             )
-    elif int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 >= 5 and\
+    elif int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 >= 0 and\
         Ref.activate_code(str(message.from_user.id), ars[1]) and\
-            int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 <= 50:
+            int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 <= 100:
         await message.answer(f'Реферальный код активирован! ')
 
     else:
@@ -333,7 +383,7 @@ async def cmd_activate(message: types.Message):
 async def cmd_create_card(message: types.Message):
     acc = Account.get_acc(message.from_user.id)
     if acc:
-        card_id = Account.make_card(message.from_user.id, acc['name'], acc['uuid'])
+        card_id = Account.create_card(str(message.from_user.id))
         if card_id:
             await message.answer(f'Карта успешно создана\n*ID карты:* {card_id}', parse_mode=ParseMode.MARKDOWN)
             await bot.send_message(
@@ -458,10 +508,13 @@ async def cmd_trans(message: types.Message):
         else:
             await message.answer('Произошла ошибка')
 
-@dp.message(Command('штраф'))
+@dp.message(Command('штраф', 'penalty'))
 async def cmd_shtraf(message: types.Message):
 
     ars = message.text.split()
+
+    if Account.get_prof(message.from_user.id)['role'] not in ['admin', 'bank']:
+        await message.answer('Недостаточно прав доступа')
 
     if len(ars) < 2: await message.answer('/штраф gamename [message] [amount]\nКомментарий к штрафу опционален')
     elif len(ars) > 4: await message.answer('/штраф gamename [message] [amount]\nКомментарий к штрафу опционален')
@@ -531,10 +584,9 @@ async def stop_work(message: types.Message):
         await message.reply("Время работы ограничено 12 часами. Остаток времени не засчитывается.")
     earnings = math.ceil(worked_hours * PAY_RATE)
     await message.reply(f"Вы отработали {worked_hours:.2f} часов.")
-    if Bank.top_up_card('z', Account.get_prof(message.from_user.id)['main_card'], message.from_user.id, earnings):
+    if Bank.top_up('z', Account.get_prof(message.from_user.id)['main_card'], '', earnings, 'Зарплата'):
         await message.answer(f'Вам выплачено: {earnings} АР')
         await bot.send_message(GROUP_ID, f"Пользователь {message.from_user.full_name} (@{message.from_user.username}) закончил работу.\nЗаработано: {earnings} AR.", message_thread_id = 11)
-
     else:
         await message.answer('Возникла ошибка')
 
@@ -557,14 +609,13 @@ async def stop_work(message: types.Message):
         await message.reply("Время работы ограничено 12 часами. Остаток времени не засчитывается.")
     earnings = math.ceil(worked_hours * PAY_RATE)
     await message.reply(f"Вы отработали {worked_hours:.2f} часов.")
-    if Bank.top_up_card('z', Account.get_prof(message.from_user.id)['main_card'], message.from_user.id, earnings):
+    if Bank.top_up('z', Account.get_prof(message.from_user.id)['main_card'], '', earnings, 'Зарплата'):
         await message.answer(f'Вам выплачено: {earnings} АР')
-        await  bot.send_message(GROUP_ID, f"Пользователь {message.from_user.full_name} (@{message.from_user.username}) закончил работу.\nЗаработано: {earnings} AR.", message_thread_id = 11)
-  
+        await bot.send_message(GROUP_ID, f"Пользователь {message.from_user.full_name} (@{message.from_user.username}) закончил работу.\nЗаработано: {earnings} AR.", message_thread_id = 11)
     else:
         await message.answer('Возникла ошибка')
 
-@dp.message(Command('status'))
+@dp.message(Command('status', 'статус'))
 async def work_status(message: types.Message):
     user_id = message.from_user.id
     if user_id in users_data:

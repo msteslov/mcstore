@@ -56,16 +56,31 @@ TRANSACTION_DEFAULT = {
     "status": 0,
 }
 
+BANK_STAT_DEFAULT = {
+    "quantity": 0,
+    "premium": 0,
+    "limit": 192,
+    "trans_count": 0
+}
+
 def check_prof(user_id, username, uuid, name) -> bool:
     with open('data/account.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
+    with open('data/stat.json', 'r', encoding = 'utf-8') as file:
+        stat = json.load(file)
     
-    if str(user_id) not in data:
+    if str(user_id) not in data and str(user_id) not in stat:
         try:
             data[str(user_id)] = PROF_DEFAULT
             data[str(user_id)]["user"] = str(username)
             data[str(user_id)]["uuid"] = uuid
             data[str(user_id)]["name"] = name
+
+            stat[str(user_id)] = BANK_STAT_DEFAULT
+
+            with open('data/stat.json', 'w', encoding = 'utf-8') as file:
+                json.dump(stat, file, ensure_ascii = False, indent = 4)
+
             with open('data/account.json', 'w', encoding='utf-8') as file:
                 json.dump(data, file, ensure_ascii=False, indent=4)
                 return True
@@ -157,68 +172,10 @@ def get_prof(user_id) -> dict:
     except Exception as e:
         print(e)
         return False
-    
-def make_card(user_id, name, uuid):
-    with open('data/account.json', 'r', encoding='utf-8') as file:
-        data = json.load(file)
-    
-    with open('data/cards.json', 'r', encoding='utf-8') as file:
-        cards = json.load(file)
 
-    id = str(len(cards))
-    while len(id) < 4:
-        id = '0' + id
+def create_card(user_id: str) -> int:
 
-    if id not in cards:
-
-        
-        if data[str(user_id)]["count_cards"] == 0:
-            data[str(user_id)]["main_card"] = id
-
-            cards[id] = CARD_DEFAULT
-            data[str(user_id)]["cards"].append(id)
-            data[str(user_id)]["count_cards"] += 1
-            cards[id]["user"] = str(user_id)
-            cards[id]['name'] = name
-            cards[id]['uuid'] = uuid
-
-
-            with open('data/account.json', 'w', encoding='utf-8') as file:
-                json.dump(data, file, ensure_ascii=False, indent=4)
-            
-            with open('data/cards.json', 'w', encoding='utf-8') as file:
-                json.dump(cards, file, ensure_ascii=False, indent=4)
-
-            with open('logs.txt', 'a', encoding='utf-8') as file:
-                file.write(f'Создание карты: \tID карты: {id}\tПользователь: {user_id}\t Дата: {datetime.datetime.now()}\n')
-
-            return id
-        
-        else:
-            if data[str(user_id)]["count_cards"] * 5 < data[str(user_id)]["balance"]:
-                cards[id] = CARD_DEFAULT
-                data[str(user_id)]["cards"].append(id)
-                data[str(user_id)]["count_cards"] += 1
-                cards[id]["user"] = str(user_id)
-                cards[id]['name'] = name
-                cards[id]['uuid'] = uuid
-                data[str(user_id)]["balance"] -= (5*data[str(user_id)]["count_cards"])
-    
-                with open('data/account.json', 'w', encoding='utf-8') as file:
-                    json.dump(data, file, ensure_ascii=False, indent=4)
-                with open('data/cards.json', 'w', encoding='utf-8') as file:
-                    json.dump(cards, file, ensure_ascii=False, indent=4)
-                with open('logs.txt', 'a', encoding='utf-8') as file:
-                    file.write(f'Создание карты: \tID карты: {id}\tПользователь: {user_id}\t Дата: {datetime.datetime.now()}\n')
-                
-            else:
-                return False
-    else:
-        return make_card(user_id)
-    return id
-
-
-def create_card(user_id):
+    user_id = str(user_id)
 
     with open('data/account.json', 'r', encoding = 'utf-8') as file:
         users = json.load(file)
@@ -233,16 +190,66 @@ def create_card(user_id):
     if id not in cards:
         if users[user_id]['cards']: #if card not first
             if Bank.bank_info(users[user_id]['main_card'])['balance'] < (len(users[user_id]['cards']) - 1) * 5:
-                return False
+                return 0
             else:
-                cards[id] = CARD_DEFAULT
-                users[user_id]['cards'].append(id)
-                cards[id]['user'] = str(user_id)
-                cards[id]['name'] = get_acc(user_id)['name']
-                cards[id]['uuid'] = get_acc[user_id]['uuid']
-                
+
+                tr = Bank.top_up(users[user_id]['main_card'], 'z', '', (len(users[user_id]['cards']) - 1) * 5, 'Покупка карты')
+
+                if tr:
+
+                    cards[id] = CARD_DEFAULT
+                    users[user_id]['cards'].append(id)
+                    cards[id]['user'] = str(user_id)
+                    cards[id]['name'] = get_acc(user_id)['name']
+                    cards[id]['uuid'] = get_acc(user_id)['uuid']
+                    cards[users[user_id]['main_card']]['balance'] -= (len(users[user_id]['cards']) - 1) * 5
+                    users[user_id]['balance'] -= (len(users[user_id]['cards']) - 1) * 5
+
+                    users[user_id]['count_cards'] += 1
+
+                else:
+                    return 0
+        else:
+            cards[id] = CARD_DEFAULT
+            users[user_id]['cards'].append(id)
+            cards[id]['user'] = str(user_id)
+            cards[id]['name'] = get_acc(user_id)['name']
+            cards[id]['uuid'] = get_acc[user_id]['uuid']
+            users[user_id]['count_cards'] += 1
+            users[user_id]['main_card'] = id
+
+
+        with open('data/account.json', 'w', encoding='utf-8') as file:
+            json.dump(users, file, ensure_ascii=False, indent=4)
+        with open('data/cards.json', 'w', encoding='utf-8') as file:
+            json.dump(cards, file, ensure_ascii=False, indent=4)
+        with open('logs.txt', 'a', encoding='utf-8') as file:
+            file.write(f'Создание карты: \tID карты: {id}\tПользователь: {user_id}\t Дата: {datetime.datetime.now()}\n')    
 
     else:
-        return make_card(user_id)
+        return create_card(user_id)
     return id
+
+def dostup(username):
+
+    with open('data/account.json', 'r', encoding = 'utf-8') as file:
+        data = json.load(file)
+
+    data[get_acc_by_name(username)['user_id']]['role'] = 'staf'
+
+    with open('data/account.json', 'w', encoding = 'utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent = 4)
+
+    return True
+
+def nedostup(username):
+    with open('data/account.json', 'r', encoding = 'utf-8') as file:
+        data = json.load(file)
+
+    data[get_acc_by_name(username)['user_id']]['role'] = 'user'
+
+    with open('data/account.json', 'w', encoding = 'utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent = 4)
+
+    return True
     

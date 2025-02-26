@@ -1,6 +1,7 @@
 import datetime
 import json
-import src.Account as Account
+
+from src import Account
 
 CARD_DEFAULT = {
     "balance": 0,
@@ -160,7 +161,6 @@ def top_up(from_card, to_card, message, amount, type):
 
     with open('data/account.json', 'r', encoding = 'utf-8') as file2:
         users = json.load(file2)
-    print(cards[from_card]['balance'])
     if cards[from_card]['balance'] < amount:
         return -1
     elif cards[from_card]['balance'] >= amount:
@@ -179,11 +179,16 @@ def top_up(from_card, to_card, message, amount, type):
         user1 = cards[from_card]['user']
         user2 = cards[to_card]['user']
 
+        print(users[user1]['balance'])
+
         users[user1]['last_transactions'].insert(len(users[user1]['last_transactions']) % 5, tr)
-        users[user2]['count_transactions'] += 1
+        users[user1]['count_transactions'] += 1
         users[user1]['balance'] -= amount
 
-        users[user2]['last_transactions'].insert(len(users[user1]['last_transactions']) % 5, tr)
+        print(users[user1]['balance'])
+
+
+        users[user2]['last_transactions'].insert(len(users[user2]['last_transactions']) % 5, tr)
         users[user2]['count_transactions'] += 1
         users[user2]['balance'] += amount
 
@@ -195,5 +200,22 @@ def top_up(from_card, to_card, message, amount, type):
 
         return tr
         
+def tups(amount):
+
+    with open('data/account.json', 'r', encoding = 'utf-8') as file:
+        data = json.load(file)
+    with open('data/cards.json', 'r', encoding = 'utf-8') as file:
+        cards = json.load(file)
+
+    data['server']['balance'] += amount
+    cards['z']['balance'] += amount
+
+    with open('data/cards.json', 'w', encoding = 'utf-8') as file:
+        json.dump(cards, file, ensure_ascii=False, indent=4)
+
+    with open('data/account.json', 'w', encoding = 'utf-8') as file2:
+        json.dump(data, file2, ensure_ascii=False, indent=4)
+
+    return True
 
 

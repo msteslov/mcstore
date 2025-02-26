@@ -1,104 +1,56 @@
 {
     "z": {
-        "balance": 9999996987,
+        "balance": 10003994002,
         "last_transactions": [
+            2,
+            25,
+            26,
+            27,
+            28,
+            29,
+            8,
+            18,
+            19,
+            20,
+            21,
             3,
             4,
             5,
-            6
+            6,
+            7
         ],
-        "count_transactions": 16,
-        "user": "1461832447",
+        "count_transactions": 28,
+        "user": "server",
         "name": "server",
         "uuid": "000"
     },
     "0000": {
-        "balance": 99943696,
+        "balance": 2006,
         "last_transactions": [
+            28,
             2,
-            3
+            23,
+            24,
+            25,
+            26,
+            27,
+            2,
+            3,
+            7,
+            8,
+            22
         ],
-        "count_transactions": 30,
+        "count_transactions": 40,
         "user": "1461832447",
         "name": "tinterer",
         "uuid": "qweqweqe"
     },
     "0002": {
-        "balance": 1000,
-        "last_transactions": [
-            4
-        ],
-        "count_transactions": 1,
-        "user": "1461832447",
-        "name": "tinterer",
-        "uuid": "qweqweqe"
-    },
-    "0003": {
         "balance": 0,
         "last_transactions": [],
         "count_transactions": 0,
         "user": "1461832447",
         "name": "tinterer",
         "uuid": "qweqweqe"
-    },
-    "0004": {
-        "balance": 0,
-        "last_transactions": [],
-        "count_transactions": 0,
-        "user": "1461832447",
-        "name": "tinterer",
-        "uuid": "qweqweqe"
-    },
-    "0005": {
-        "balance": 0,
-        "last_transactions": [],
-        "count_transactions": 0,
-        "user": "1461832447",
-        "name": "tinterer",
-        "uuid": "qweqweqe"
-    },
-    "0006": {
-        "balance": 999,
-        "last_transactions": [
-            2,
-            5,
-            6
-        ],
-        "count_transactions": 3,
-        "user": "813373727",
-        "name": "LogikaCode",
-        "uuid": "9678e464-8674-4896-a972-e89536f83602"
-    },
-    "0007": {
-        "balance": 0,
-        "last_transactions": [],
-        "count_transactions": 0,
-        "user": "5690683710",
-        "name": "",
-        "uuid": "2aeb4a97-e55e-4d4b-8248-2dfcf7439c03"
-    },
-    "0008": {
-        "balance": 0,
-        "last_transactions": [],
-        "count_transactions": 0,
-        "user": "1138827235",
-        "name": "",
-        "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb"
-    },
-    "0009": {
-        "balance": 0,
-        "last_transactions": [],
-        "count_transactions": 0,
-        "user": "1461832447",
-        "name": "tinterer",
-        "uuid": "qweqweqe"
-    },
-    "0010": {
-        "balance": 0,
-        "last_transactions": [],
-        "count_transactions": 0,
-        "user": "813373727",
-        "name": "LogikaCode",
-        "uuid": "9678e464-8674-4896-a972-e89536f83602"
     }
 }

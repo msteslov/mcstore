@@ -1,6 +1,7 @@
 import json
 import random
-# from src import Account
+
+from src import Bank
 
 CODE_DEFAULT = {
     "user_id": ""
@@ -66,8 +67,21 @@ def activate_code(user_id: str, code: str) -> bool:
                 with open('data/codes.json', 'w', encoding = 'utf-8') as file_2:
                     json.dump(codes, file_2, ensure_ascii=False, indent=4)
 
-                return (codes[code]['user_id'])
+                if Bank.top_up('z', data[codes[code]['user_id']]['main_card'], '', 10, 'Активация приглашения') and\
+                Bank.top_up('z', data[user_id]['main_card'], '', 20, 'Активация приглашения'):
+                    return (codes[code]['user_id'])
+                else:
+                    return False
             
             else: return False
         else: return False
     else: return False
+
+def get_referal(code):
+    with open('data/codes.json', 'r', encoding = 'utf-8') as file:
+        data = json.load(file[code])
+
+    if data['user_id']:
+        return data['user_id']
+    else:
+        return False

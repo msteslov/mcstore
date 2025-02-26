@@ -1,48 +1,53 @@
 {
+    "server": {
+        "cards": [
+            "z"
+        ],
+        "last_transactions": [
+            26,
+            27,
+            28,
+            29,
+            2
+        ],
+        "count_transactions": 5,
+        "balance": 10003994002,
+        "main_card": "",
+        "role": "admin",
+        "user": "server",
+        "uuid": "0",
+        "name": "serv"
+    },
     "1461832447": {
         "cards": [
             "0000",
-            "0002",
-            "0003",
-            "0004",
-            "0005",
-            "0009"
+            "0002"
         ],
         "last_transactions": [
-            5,
-            2,
-            3,
-            6,
-            3,
-            4,
-            4
+            26,
+            27,
+            28,
+            2
         ],
-        "count_transactions": 12,
-        "balance": 133237.0,
-        "count_cards": 6,
+        "count_transactions": 26,
+        "balance": 2006,
+        "count_cards": 16,
         "role": "admin",
         "user": "ss8mmm",
         "main_card": "0000",
         "name": "tinterer",
         "uuid": "qweqweqe",
-        "code": "UTLkL",
-        "invites": 2,
+        "code": "hK3Zo",
+        "invites": 3,
         "invited": 1
     },
     "813373727": {
-        "cards": [
-            "0006",
-            "0010"
-        ],
-        "last_transactions": [
-            2,
-            5,
-            6
-        ],
-        "count_transactions": 3,
-        "balance": 4990,
-        "count_cards": 2,
-        "role": "user",
+        "cards": [],
+        "last_transactions": [],
+        "count_transactions": 0,
+        "balance": 0,
+        "count_cards": 0,
+        "role": "admin",
         "user": "logikacode",
         "main_card": "0006",
         "uuid": "9678e464-8674-4896-a972-e89536f83602",
@@ -52,13 +57,11 @@
         "invited": 0
     },
     "5690683710": {
-        "cards": [
-            "0007"
-        ],
+        "cards": [],
         "last_transactions": [],
         "count_transactions": 0,
         "balance": 0,
-        "count_cards": 1,
+        "count_cards": 0,
         "role": "user",
         "user": "cucumber_23",
         "main_card": "0007",
@@ -69,13 +72,11 @@
         "invited": 0
     },
     "1138827235": {
-        "cards": [
-            "0008"
-        ],
+        "cards": [],
         "last_transactions": [],
         "count_transactions": 0,
         "balance": 0,
-        "count_cards": 1,
+        "count_cards": 0,
         "role": "user",
         "user": "iglobruhs",
         "main_card": "0008",
