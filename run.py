@@ -15,6 +15,8 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.enums import ParseMode
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
 
 logging.basicConfig(level=logging.INFO)
 
@@ -168,6 +170,12 @@ async def cmd_start(message: types.Message):
     )
 
 # --- Команды связанные с картами и профилем (сохранены из предыдущей версии) ---
+
+
+
+
+
+
 
 @dp.message(F.text.lower() == 'создать карту')
 async def btn_create_card(message: types.Message):
@@ -831,6 +839,163 @@ async def send_user_message(message: types.Message):
         await message.reply("Ошибка! Не удалось отправить сообщение пользователю.")
     waiting_for_message = False
 
+
+# Новый глобальный словарь для сессий перевода командой /перевод
+pending_transfer = {}
+
+@dp.message(Command('перевод'))
+async def cmd_transfer(message: types.Message):
+    user_id = message.from_user.id
+    prof = Account.get_prof(user_id)
+    if not prof or not prof.get("cards"):
+        await message.answer("У вас нет карт для перевода.")
+        return
+    # Отправляем пользователю клавиатуру с кнопками — вариант: "Карта <card>"
+    buttons = [[KeyboardButton(text=f"Карта {card}")] for card in prof["cards"]]
+    kb = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True, one_time_keyboard=True)
+    pending_transfer[user_id] = {"step": "choose_card"}
+    await message.answer("Выберите карту для списания средств:", reply_markup=kb)
+
+@dp.message(F.text.lower() == 'перевод')
+async def cmd_transfer(message: types.Message):
+    user_id = message.from_user.id
+    prof = Account.get_prof(user_id)
+    if not prof or not prof.get("cards"):
+        await message.answer("У вас нет карт для перевода.")
+        return
+    # Отправляем пользователю клавиатуру с кнопками — вариант: "Карта <card>"
+    buttons = [[KeyboardButton(text=f"Карта {card}")] for card in prof["cards"]]
+    kb = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True, one_time_keyboard=True)
+    pending_transfer[user_id] = {"step": "choose_card"}
+    await message.answer("Выберите карту для списания средств:", reply_markup=kb)
+
+def get_card2(value):
+    if len(str(value)) == 4:
+        card_id = value
+    else:
+        return False
+    return card_id
+
+@dp.message(lambda m: m.from_user.id in pending_transfer and pending_transfer[m.from_user.id]["step"] == "choose_card")
+async def transfer_choose_card(message: types.Message):
+    user_id = message.from_user.id
+    text = message.text.strip()
+    if not text.startswith("Карта "):
+        await message.answer("Пожалуйста, выберите карту, нажав одну из кнопок.")
+        return
+    card_value = text[len("Карта "):].strip()
+    card_id = get_card2(card_value)
+    if not card_id:
+        await message.answer("Неверный формат карты. Повторите ввод.")
+        return
+    pending_transfer[user_id]["from_card"] = card_id
+    pending_transfer[user_id]["step"] = "choose_method"
+    # Клавиатура для выбора метода перевода
+    method_buttons = [
+        [KeyboardButton(text="game")],
+        [KeyboardButton(text="username")],
+        [KeyboardButton(text="card")]
+    ]
+    kb = ReplyKeyboardMarkup(keyboard=method_buttons, resize_keyboard=True, one_time_keyboard=True)
+    await message.answer("Выберите метод перевода:\nВведите 'game' для геймнейма, 'username' для юзернейма, или 'card' для номера карты.", reply_markup=kb)
+
+@dp.message(lambda m: m.from_user.id in pending_transfer and pending_transfer[m.from_user.id]["step"] == "choose_method")
+async def transfer_choose_method(message: types.Message):
+    user_id = message.from_user.id
+    method = message.text.strip().lower()
+    if method not in ['game', 'username', 'card']:
+        await message.answer("Неверный метод. Введите: game, username или card.")
+        return
+    pending_transfer[user_id]["method"] = "method_" + method
+    pending_transfer[user_id]["step"] = "input_target"
+    await message.answer("Введите данные получателя (в зависимости от выбранного метода):", reply_markup=types.ReplyKeyboardRemove())
+
+@dp.message(lambda m: m.from_user.id in pending_transfer and pending_transfer[m.from_user.id]["step"] == "input_target")
+async def transfer_input_target(message: types.Message):
+    user_id = message.from_user.id
+    pending_transfer[user_id]["target"] = message.text.strip()
+    pending_transfer[user_id]["step"] = "comment_decision"
+    # Клавиатура для выбора, добавлять комментарий или нет
+    decision_buttons = [[KeyboardButton(text="Да")], [KeyboardButton(text="Нет")]]
+    kb = ReplyKeyboardMarkup(keyboard=decision_buttons, resize_keyboard=True, one_time_keyboard=True)
+    await message.answer("Хотите добавить комментарий к переводу? (Введите 'Да' или 'Нет')", reply_markup=kb)
+
+@dp.message(lambda m: m.from_user.id in pending_transfer and pending_transfer[m.from_user.id]["step"] == "comment_decision")
+async def transfer_comment_decision(message: types.Message):
+    user_id = message.from_user.id
+    decision = message.text.strip().lower()
+    if decision == "да":
+        pending_transfer[user_id]["step"] = "input_comment"
+        await message.answer("Введите комментарий к переводу:", reply_markup=types.ReplyKeyboardRemove())
+    elif decision == "нет":
+        pending_transfer[user_id]["comment"] = ""
+        pending_transfer[user_id]["step"] = "input_amount"
+        await message.answer("Введите сумму перевода:", reply_markup=types.ReplyKeyboardRemove())
+    else:
+        await message.answer("Пожалуйста, введите 'Да' или 'Нет'.")
+
+@dp.message(lambda m: m.from_user.id in pending_transfer and pending_transfer[m.from_user.id]["step"] == "input_comment")
+async def transfer_input_comment(message: types.Message):
+    user_id = message.from_user.id
+    pending_transfer[user_id]["comment"] = message.text.strip()
+    pending_transfer[user_id]["step"] = "input_amount"
+    await message.answer("Введите сумму перевода:")
+
+@dp.message(lambda m: m.from_user.id in pending_transfer and pending_transfer[m.from_user.id]["step"] == "input_amount")
+async def transfer_input_amount(message: types.Message):
+    user_id = message.from_user.id
+    kb = admin_keyboard if message.from_user.id == ADMIN_ID else start_keyboard
+    try:
+        amount = int(message.text.strip())
+        if amount <= 0:
+            await message.answer("Сумма должна быть больше 0. Введите корректную сумму:")
+            return
+    except ValueError:
+        await message.answer("Введите число для суммы:")
+        return
+    pending_transfer[user_id]["amount"] = amount
+    data = pending_transfer.pop(user_id)
+    from_card = data.get("from_card")
+    method = data.get("method")
+    target_input = data.get("target")
+    comment = data.get("comment", "")
+    target_card = None
+    if method == "method_username":
+        uid = Account.get_id_by_usn(target_input)
+        if not uid:
+            await message.answer("Неверный username получателя. Операция отменена.", reply_markup=kb)
+            return
+        prof_target = Account.get_prof(uid)
+        if not prof_target:
+            await message.answer("Не удалось получить данные получателя. Операция отменена.", reply_markup=kb)
+            return
+        target_card = prof_target.get("main_card")
+
+    elif method == 'method_game':
+        target_card = Account.get_prof(Account.get_acc_by_name(target_input)['user_id'])['main_card']
+        uid = Account.get_acc_by_name(target_input)['user_id']
+    elif method == 'method_card':
+        target_card = get_card2(target_input)
+        uid = Bank.bank_info(target_card)['user']
+    if not target_card:
+        await message.answer("Неверные данные получателя. Операция отменена.", reply_markup=kb)
+        return
+    tr = Bank.top_up(from_card, target_card, comment, amount, 'Перевод')
+    if tr:
+        await message.answer(f"Перевод осуществлен успешно. Транзакция №{tr}", reply_markup=kb)
+        await bot.send_message(uid, f'Вам поступил перевод от @{message.from_user.username} в размере {amount} АР\n {f"Комментарий отправителя: {comment}" if comment else "" }', )
+        await bot.send_message(
+                "-1002480162505",
+                f'*Транзакция №{tr}*'
+                f'*Отправитель:*   {Account.get_prof(message.from_user.id)["name"]}'
+                f'\n*Получатель:*   {Account.get_prof(uid)["name"]}'
+                f'\n*Сумма:*        {amount}'
+                f'\n*Сообщение:*    {comment}',
+                message_thread_id=4,
+                parse_mode=ParseMode.MARKDOWN_V2
+            )
+    else:
+        await message.answer("Произошла ошибка при переводе.")
 async def main():
     await dp.start_polling(bot)
 

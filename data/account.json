@@ -27,15 +27,27 @@
             "0004"
         ],
         "last_transactions": [
+            15,
+            16,
+            16,
+            14,
+            15,
+            16,
+            16,
+            15,
             6,
+            10,
+            11,
+            12,
+            12,
             26,
             27,
             28,
             2,
             4
         ],
-        "count_transactions": 28,
-        "balance": 1492,
+        "count_transactions": 40,
+        "balance": 1471,
         "count_cards": 18,
         "role": "admin",
         "user": "ss8mmm",
@@ -53,10 +65,14 @@
             "0010"
         ],
         "last_transactions": [
-            6
+            6,
+            10,
+            11,
+            14,
+            15
         ],
-        "count_transactions": 1,
-        "balance": 485,
+        "count_transactions": 5,
+        "balance": 506,
         "count_cards": 3,
         "role": "admin",
         "user": "logikacode",

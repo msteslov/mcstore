@@ -39,7 +39,7 @@ def reg_transaction(from_card, to_card, from_user, to_user, amount, message, typ
     with open('data/transactions.json', 'w', encoding='utf-8') as file:
         json.dump(transactions, file, ensure_ascii=False, indent=4)
 
-    return int(len(transactions))
+    return int(len(transactions)) - 1
 
 def trans_info(transaction):
     with open('data/transactions.json', 'r', encoding = 'utf-8') as file:
