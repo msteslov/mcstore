@@ -1,9 +1,11 @@
 {
     "z": {
-        "balance": 10003993991,
+        "balance": 10003993976,
         "last_transactions": [
             2,
             4,
+            21,
+            22,
             25,
             26,
             27,
@@ -20,17 +22,20 @@
             6,
             7
         ],
-        "count_transactions": 29,
+        "count_transactions": 31,
         "user": "server",
         "name": "server",
         "uuid": "000"
     },
     "0000": {
-        "balance": 1435,
+        "balance": 1422,
         "last_transactions": [
+            22,
             15,
             16,
             16,
+            18,
+            20,
             11,
             12,
             14,
@@ -52,7 +57,7 @@
             8,
             22
         ],
-        "count_transactions": 51,
+        "count_transactions": 54,
         "user": "1461832447",
         "name": "tinterer",
         "uuid": "qweqweqe"
@@ -86,15 +91,18 @@
         "uuid": "qweqweqe"
     },
     "0005": {
-        "balance": 506,
+        "balance": 499,
         "last_transactions": [
+            18,
+            20,
+            21,
             6,
             10,
             11,
             14,
             15
         ],
-        "count_transactions": 5,
+        "count_transactions": 8,
         "user": "813373727",
         "name": "LogikaCode",
         "uuid": "9678e464-8674-4896-a972-e89536f83602"
@@ -138,5 +146,21 @@
         "user": "813373727",
         "name": "LogikaCode",
         "uuid": "9678e464-8674-4896-a972-e89536f83602"
+    },
+    "0011": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "813373727",
+        "name": "LogikaCode",
+        "uuid": "9678e464-8674-4896-a972-e89536f83602"
+    },
+    "0012": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1461832447",
+        "name": "tinterer",
+        "uuid": "qweqweqe"
     }
 }

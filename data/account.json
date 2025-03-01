@@ -5,14 +5,16 @@
         ],
         "last_transactions": [
             4,
+            21,
+            22,
             26,
             27,
             28,
             29,
             2
         ],
-        "count_transactions": 6,
-        "balance": 10003993991,
+        "count_transactions": 8,
+        "balance": 10003993976,
         "main_card": "",
         "role": "admin",
         "user": "server",
@@ -24,12 +26,16 @@
             "0000",
             "0002",
             "0003",
-            "0004"
+            "0004",
+            "0012"
         ],
         "last_transactions": [
+            22,
             15,
             16,
             16,
+            18,
+            20,
             14,
             15,
             16,
@@ -46,9 +52,9 @@
             2,
             4
         ],
-        "count_transactions": 40,
-        "balance": 1471,
-        "count_cards": 18,
+        "count_transactions": 43,
+        "balance": 1458,
+        "count_cards": 19,
         "role": "admin",
         "user": "ss8mmm",
         "main_card": "0000",
@@ -62,18 +68,22 @@
         "cards": [
             "0005",
             "0008",
-            "0010"
+            "0010",
+            "0011"
         ],
         "last_transactions": [
+            18,
+            20,
+            21,
             6,
             10,
             11,
             14,
             15
         ],
-        "count_transactions": 5,
-        "balance": 506,
-        "count_cards": 3,
+        "count_transactions": 8,
+        "balance": 499,
+        "count_cards": 4,
         "role": "admin",
         "user": "logikacode",
         "main_card": "0005",

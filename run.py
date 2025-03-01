@@ -15,8 +15,7 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.enums import ParseMode
-from aiogram.fsm.state import State, StatesGroup
-from aiogram.fsm.context import FSMContext
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -123,7 +122,57 @@ work_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
+# Новые reply‑клавиатуры
 
+
+
+# Клавиатура для обычного пользователя (Main User Keyboard)
+common_user_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="помощь"), KeyboardButton(text="начать работать")],
+        [KeyboardButton(text="поддержка"), KeyboardButton(text="финансы")]
+    ],
+    resize_keyboard=True
+)
+
+# Клавиатура для раздела "финансы"
+finances_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="создать карту"), KeyboardButton(text="профиль")],
+        [KeyboardButton(text="перевод"), KeyboardButton(text="поддержка")],
+        [KeyboardButton(text="назад")]
+    ],
+    resize_keyboard=True
+)
+
+# Клавиатура для админа (Admin Keyboard)
+admin_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="юзер"), KeyboardButton(text="работа"), KeyboardButton(text="админ")],
+        [KeyboardButton(text="назад")]
+    ],
+    resize_keyboard=True
+)
+
+# Клавиатура для раздела "работа" у админа
+admin_work_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="начать работать"), KeyboardButton(text="статистика")],
+        [KeyboardButton(text="завершить работу"), KeyboardButton(text="статус")],
+        [KeyboardButton(text="назад")]
+    ],
+    resize_keyboard=True
+)
+
+# Клавиатура для раздела "админ" с действиями
+admin_actions_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="отправить")],
+        [KeyboardButton(text="проверить айди"), KeyboardButton(text="состояние")],
+        [KeyboardButton(text="назад")]
+    ],
+    resize_keyboard=True
+)
 
 ############ Bot commands
 
@@ -558,7 +607,7 @@ async def start_work(message: types.Message):
     else:
         await message.answer('У вас нет доступа для выполнения данного действия')
         
-@dp.message(F.text == 'Начать работать')
+@dp.message(F.text.lower() == 'начать работать')
 async def start_workk(message: types.Message):
     user_id = message.from_user.id
     if Account.get_prof(user_id)['role'] in ['bank', 'admin']:
@@ -602,7 +651,7 @@ async def stop_work(message: types.Message):
     kb = start_keyboard
     await message.answer("Рабочая сессия завершена.", reply_markup=kb)
 
-@dp.message(F.text == 'Завершить работу')
+@dp.message(F.text.lower() == 'завершить работу')
 async def stop_work(message: types.Message):
     user_id = message.from_user.id
     now = datetime.datetime.now()
@@ -634,7 +683,7 @@ async def work_status(message: types.Message):
     else:
         await message.reply("Вы не начали работу. Используйте 'Начать работу'.")
 
-@dp.message(F.text == 'Статус')
+@dp.message(F.text.lower() == 'Статус')
 async def work_status(message: types.Message):
     user_id = message.from_user.id
     if user_id in users_data:
@@ -645,7 +694,7 @@ async def work_status(message: types.Message):
     else:
         await message.reply("Вы не начали работу. Используйте 'Начать работу'.")
 
-@dp.message(F.text == "Отчет", Command('report'))
+@dp.message(Command('report'))
 async def request_report(message: types.Message):
     user_id = message.from_user.id
     if user_id in banned_users:
@@ -693,7 +742,7 @@ async def contact_admin(message: types.Message):
     waiting_for_admin_message[user_id] = True
     await message.reply("Введите ваше сообщение для администратора:")
 
-@dp.message(F.text == 'Поддержка')
+@dp.message(F.text.lower() == 'поддержка')
 async def contact_admin(message: types.Message):
     user_id = message.from_user.id
     if user_id in banned_users:
@@ -731,7 +780,7 @@ async def admin_stats(message: types.Message):
         stats_message += f"Пользователь: @{username} ({uid}) — {elapsed:.2f} часов\n"
     await bot.send_message(ADMIN_ID, stats_message)
 
-@dp.message(F.text == "Статистика")
+@dp.message(F.text.lower() == "Статистика")
 async def admin_stats(message: types.Message):
     if message.from_user.id != ADMIN_ID:
         return
@@ -798,6 +847,14 @@ async def request_check_id(message: types.Message):
     waiting_for_user_id_check = True
     await message.reply("Введите ID пользователя для проверки:")
 
+@dp.message(F.text.lower() == 'проверить айди')
+async def request_check_id(message: types.Message):
+    if message.from_user.id != ADMIN_ID:
+        return
+    global waiting_for_user_id_check
+    waiting_for_user_id_check = True
+    await message.reply("Введите ID пользователя для проверки:")
+
 @dp.message(lambda message: waiting_for_user_id_check and message.text.isdigit() and message.from_user.id == ADMIN_ID)
 async def check_user_id(message: types.Message):
     global waiting_for_user_id_check
@@ -811,6 +868,15 @@ async def check_user_id(message: types.Message):
     waiting_for_user_id_check = False
 
 @dp.message(Command("send"))
+async def request_user_message(message: types.Message):
+    if message.from_user.id != ADMIN_ID:
+        return
+    global waiting_for_message, target_user_id
+    waiting_for_message = True
+    target_user_id = None
+    await message.reply("Введите ID пользователя, которому хотите отправить сообщение.")
+
+@dp.message(F.text.lower() == 'отправить')
 async def request_user_message(message: types.Message):
     if message.from_user.id != ADMIN_ID:
         return
@@ -996,6 +1062,61 @@ async def transfer_input_amount(message: types.Message):
             )
     else:
         await message.answer("Произошла ошибка при переводе.")
+
+@dp.message(lambda m: m.text.lower() == 'финансы')
+async def finances_handler(message: types.Message):
+    # Показать клавиатуру раздела "финансы"
+    await message.answer("Меню финансов", reply_markup=finances_kb)
+
+@dp.message(lambda m: m.text.lower() == 'назад')
+async def back_handler(message: types.Message):
+    user_id = message.from_user.id
+    prof = Account.get_prof(user_id)
+    # Если роль админа или банка – вернуть админскую клавиатуру, иначе – обычное меню пользователя
+    if prof and prof.get("role") in ["admin", "bank"]:
+        await message.answer("Админ меню", reply_markup=admin_kb)
+    else:
+        await message.answer("Главное меню", reply_markup=common_user_kb)
+
+@dp.message(lambda m: m.text.lower() == 'юзер')
+async def user_handler(message: types.Message):
+    # Выводим дефолтную клавиатуру для обычных пользователей
+    await message.answer("Пользовательское меню", reply_markup=common_user_kb)
+
+@dp.message(lambda m: m.text.lower() == 'работа')
+async def work_handler(message: types.Message):
+    # Доступно только администраторам/банкам
+    if Account.get_prof(message.from_user.id).get("role") in ["admin", "bank"]:
+        await message.answer("Рабочее админ меню", reply_markup=admin_work_kb)
+    else:
+        await message.answer("Недостаточно прав доступа.")
+
+@dp.message(lambda m: m.text.lower() == 'админ')
+async def admin_handler(message: types.Message):
+    # Отображаем клавиатуру админских действий
+    if Account.get_prof(message.from_user.id).get("role") in ["admin", "bank"]:
+        await message.answer("Админ действия", reply_markup=admin_actions_kb)
+    else:
+        await message.answer("Недостаточно прав доступа.")
+
+@dp.message(lambda m: m.text.lower() == 'состояние')
+async def status_handler(message: types.Message):
+    # Здесь можно собрать данные о состоянии бота, сервера и соединения.
+    active_users_count = len(users_data)
+    # Заглушки для статуса сервера и соединения. Замените на реальную логику при необходимости.
+    server_status = "Online"
+    connection_status = "Stable"
+    status_text = (
+        f"Состояние бота:\n"
+        f"Активных пользователей: {active_users_count}\n"
+        f"Сервер: {server_status}\n"
+        f"Соединение: {connection_status}"
+    )
+    # Если админ, оставляем админскую клавиатуру, иначе – обычную
+    prof = Account.get_prof(message.from_user.id)
+    kb = admin_actions_kb if prof and prof.get("role") in ["admin", "bank"] else common_user_kb
+    await message.answer(status_text, reply_markup=kb)
+
 async def main():
     await dp.start_polling(bot)
 
