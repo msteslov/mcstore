@@ -214,7 +214,7 @@ def create_card(user_id: str) -> int:
             users[user_id]['cards'].append(id)
             cards[id]['user'] = str(user_id)
             cards[id]['name'] = get_acc(user_id)['name']
-            cards[id]['uuid'] = get_acc[user_id]['uuid']
+            cards[id]['uuid'] = get_acc(user_id)['uuid']
             users[user_id]['count_cards'] += 1
             users[user_id]['main_card'] = id
 

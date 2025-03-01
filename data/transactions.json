@@ -22,5 +22,89 @@
         "id": "_1",
         "status": 1,
         "message": ""
+    },
+    "2": {
+        "from": "tinterer",
+        "from_card": "0000",
+        "to": "serv",
+        "to_card": "z",
+        "amount": 5,
+        "date": "date",
+        "type": "Покупка карты",
+        "id": "_2",
+        "status": 1,
+        "message": ""
+    },
+    "3": {
+        "from": "serv",
+        "from_card": "z",
+        "to": "tinterer",
+        "to_card": "0000",
+        "amount": 11,
+        "date": "date",
+        "type": "Зарплата",
+        "id": "_3",
+        "status": 1,
+        "message": ""
+    },
+    "4": {
+        "from": "tinterer",
+        "from_card": "0000",
+        "to": "serv",
+        "to_card": "z",
+        "amount": 10,
+        "date": "date",
+        "type": "Покупка карты",
+        "id": "_4",
+        "status": 1,
+        "message": ""
+    },
+    "5": {
+        "from": "tinterer",
+        "from_card": "0000",
+        "to": "LogikaCode",
+        "to_card": "0005",
+        "amount": 500,
+        "date": "date",
+        "type": "Перевод",
+        "id": "_5",
+        "status": 1,
+        "message": ""
+    },
+    "6": {
+        "from": "Iglobruhs",
+        "from_card": "0006",
+        "to": "serv",
+        "to_card": "z",
+        "amount": 0,
+        "date": "date",
+        "type": "Покупка карты",
+        "id": "_6",
+        "status": 1,
+        "message": ""
+    },
+    "7": {
+        "from": "LogikaCode",
+        "from_card": "0005",
+        "to": "serv",
+        "to_card": "z",
+        "amount": 0,
+        "date": "date",
+        "type": "Покупка карты",
+        "id": "_7",
+        "status": 1,
+        "message": ""
+    },
+    "8": {
+        "from": "LogikaCode",
+        "from_card": "0005",
+        "to": "serv",
+        "to_card": "z",
+        "amount": 5,
+        "date": "date",
+        "type": "Покупка карты",
+        "id": "_8",
+        "status": 1,
+        "message": ""
     }
 }

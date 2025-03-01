@@ -1,8 +1,9 @@
 {
     "z": {
-        "balance": 10003994002,
+        "balance": 10003993991,
         "last_transactions": [
             2,
+            4,
             25,
             26,
             27,
@@ -19,16 +20,18 @@
             6,
             7
         ],
-        "count_transactions": 28,
+        "count_transactions": 29,
         "user": "server",
         "name": "server",
         "uuid": "000"
     },
     "0000": {
-        "balance": 2006,
+        "balance": 1492,
         "last_transactions": [
             28,
             2,
+            4,
+            6,
             23,
             24,
             25,
@@ -40,7 +43,7 @@
             8,
             22
         ],
-        "count_transactions": 40,
+        "count_transactions": 42,
         "user": "1461832447",
         "name": "tinterer",
         "uuid": "qweqweqe"
@@ -52,5 +55,71 @@
         "user": "1461832447",
         "name": "tinterer",
         "uuid": "qweqweqe"
+    },
+    "0003": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1461832447",
+        "name": "tinterer",
+        "uuid": "qweqweqe"
+    },
+    "0004": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1461832447",
+        "name": "tinterer",
+        "uuid": "qweqweqe"
+    },
+    "0005": {
+        "balance": 485,
+        "last_transactions": [
+            6
+        ],
+        "count_transactions": 1,
+        "user": "813373727",
+        "name": "LogikaCode",
+        "uuid": "9678e464-8674-4896-a972-e89536f83602"
+    },
+    "0006": {
+        "balance": -5,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1138827235",
+        "name": "",
+        "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb"
+    },
+    "0007": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1138827235",
+        "name": "",
+        "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb"
+    },
+    "0008": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "813373727",
+        "name": "LogikaCode",
+        "uuid": "9678e464-8674-4896-a972-e89536f83602"
+    },
+    "0009": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1292320716",
+        "name": "",
+        "uuid": "14b7e279-30a3-4beb-a85d-96d24fcaf1a0"
+    },
+    "0010": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "813373727",
+        "name": "LogikaCode",
+        "uuid": "9678e464-8674-4896-a972-e89536f83602"
     }
 }
