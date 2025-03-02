@@ -24,7 +24,7 @@ ADMIN_ID = 813373727  # Замените на ID создателя бота
 GROUP_ID = -1002480162505 #For logs
 IP_PORT = '213.171.17.87:25040' #address
 
-bot = Bot(token='7368137489:AAFt7-k5vRWSTnTR8V6c8cBej93RzEdpZgA')  # текущий токен для aiogram
+bot = Bot(token='7560882994:AAEnIP5PnGmNo0Wx03QwQIWZaMSs1zLUUkQ')  # текущий токен для aiogram
 dp = Dispatcher()
 
 users_data = {}          # Хранение времени начала работы (user_id -> datetime)
