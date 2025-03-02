@@ -189,11 +189,10 @@ def create_card(user_id: str) -> int:
 
     if id not in cards:
         if users[user_id]['cards']: #if card not first
-            if Bank.bank_info(users[user_id]['main_card'])['balance'] < (len(users[user_id]['cards']) - 1) * 5:
+            if Bank.bank_info(users[user_id]['main_card'])['balance'] < (len(users[user_id]['cards'])) * 5:
                 return 0
             else:
-
-                tr = Bank.top_up(users[user_id]['main_card'], 'z', '', (len(users[user_id]['cards']) - 1) * 5, 'Покупка карты')
+                tr = Bank.top_up(users[user_id]['main_card'], 'казна', '', (len(users[user_id]['cards']) - 1) * 5, 'Покупка карты')
 
                 if tr:
 

@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO)
 # Параметры бота и глобальные переменные (интеграция telebot-логики)
 ADMIN_ID = 813373727  # Замените на ID создателя бота
 GROUP_ID = -1002480162505 #For logs
-IP_PORT = '65.108.206.102:25648' #address
+IP_PORT = '213.171.17.87:25040' #address
 
 bot = Bot(token='7368137489:AAFt7-k5vRWSTnTR8V6c8cBej93RzEdpZgA')  # текущий токен для aiogram
 dp = Dispatcher()
@@ -85,52 +85,29 @@ def save_work_data():
 load_work_data()
 load_banned_users()
 
-# Клавиатуры
-main_keyboard = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text="Начать работать"), KeyboardButton(text="Завершить работу")],
-        [KeyboardButton(text="Статус"), KeyboardButton(text="Отчет")],
-        [KeyboardButton(text="Поддержка")]
-    ],
-    resize_keyboard=True
-)
-
-admin_keyboard = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text="Статистика")],
-        [KeyboardButton(text="Начать работать"), KeyboardButton(text="Завершить работу")],
-        [KeyboardButton(text="Статус")],
-        [KeyboardButton(text="Проверить ID пользователя"), KeyboardButton(text="Отправить сообщение пользователю")]
-    ],
-    resize_keyboard=True
-)# Создаём новую клавиатуру для пользователей, использующих команду /старт
-start_keyboard = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text="Профиль"), KeyboardButton(text="Помощь")],
-        [KeyboardButton(text="Создать карту")],
-        [KeyboardButton(text="Начать работать"), KeyboardButton(text="Поддержка")]
-    ],
-    resize_keyboard=True
-)
 
 # Новая клавиатура для рабочего процесса
 work_keyboard = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="Статус"), KeyboardButton(text="Завершить работу")],
-        [KeyboardButton(text="Поддержка")]
+        [KeyboardButton(text="Поддержка"), KeyboardButton(text='назад')]
     ],
     resize_keyboard=True
 )
 
-# Новые reply‑клавиатуры
-
-
-
 # Клавиатура для обычного пользователя (Main User Keyboard)
 common_user_kb = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="помощь"), KeyboardButton(text="начать работать")],
-        [KeyboardButton(text="поддержка"), KeyboardButton(text="финансы")]
+        [KeyboardButton(text="помощь"), KeyboardButton(text="финансы")],
+        [KeyboardButton(text="поддержка")]
+    ],
+    resize_keyboard=True
+)
+
+adm_user_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="помощь"), KeyboardButton(text="финансы")],
+        [KeyboardButton(text="поддержка"), KeyboardButton(text='назад')]
     ],
     resize_keyboard=True
 )
@@ -146,10 +123,10 @@ finances_kb = ReplyKeyboardMarkup(
 )
 
 # Клавиатура для админа (Admin Keyboard)
-admin_kb = ReplyKeyboardMarkup(
+admin_keyboard = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="юзер"), KeyboardButton(text="работа"), KeyboardButton(text="админ")],
-        [KeyboardButton(text="назад")]
+        [KeyboardButton(text="юзер"), KeyboardButton(text="работа")],
+        [KeyboardButton(text="админ")]
     ],
     resize_keyboard=True
 )
@@ -170,6 +147,33 @@ admin_actions_kb = ReplyKeyboardMarkup(
         [KeyboardButton(text="отправить")],
         [KeyboardButton(text="проверить айди"), KeyboardButton(text="состояние")],
         [KeyboardButton(text="назад")]
+    ],
+    resize_keyboard=True
+)
+
+# Новая клавиатура для банкира – раздел "работа"
+banker_work_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="начать работать"), KeyboardButton(text="статус"), KeyboardButton(text="пополнить")],
+        [KeyboardButton(text="завершить работу"), KeyboardButton(text="отчет"), KeyboardButton(text='назад')]
+    ],
+    resize_keyboard=True
+)
+
+# Новая клавиатура для банкира – раздел "финансы"
+banker_finances_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="создать карту"), KeyboardButton(text="профиль")],
+        [KeyboardButton(text="назад")]
+    ],
+    resize_keyboard=True
+)
+
+# Добавляем новую клавиатуру для банкира (начальное меню)
+banker_keyboard = ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="работа"), KeyboardButton(text="финансы")],
+        [KeyboardButton(text="поддержка"), KeyboardButton(text="помощь")]
     ],
     resize_keyboard=True
 )
@@ -196,7 +200,13 @@ async def cmd_auth(message: types.Message):
                Account.add_username(message.from_user.id, message.from_user.username, response.uuid, response.name) and \
                 Ref.gen_code(str(message.from_user.id)):
                 Account.create_acc(response.name, response.uuid, message.from_user.id, message.from_user.username)
-                kb = admin_keyboard if message.from_user.id == ADMIN_ID else start_keyboard
+                role = Account.get_prof(message.from_user.id)['role']
+                if role == "admin":
+                    kb = admin_keyboard
+                elif role == "bank":
+                    kb = banker_keyboard
+                else:
+                    kb = common_user_kb
                 await message.answer(
                     f'Вы успешно запустили бота MC Store!\nДобро пожаловать, *{message.from_user.username}*!',
                     parse_mode=ParseMode.MARKDOWN,
@@ -209,9 +219,15 @@ async def cmd_auth(message: types.Message):
             await message.answer("Произошла ошибка при регистрации!")
 
 @dp.message(F.text.lower() == 'старт')
-async def cmd_start(message: types.Message):
+async def cmd_start_text(message: types.Message):
     all_users.add(message.from_user.id)
-    kb = admin_keyboard if message.from_user.id == ADMIN_ID else start_keyboard
+    role = Account.get_prof(message.from_user.id)['role']
+    if role == "admin":
+        kb = admin_keyboard
+    elif role == "bank":
+        kb = banker_keyboard
+    else:
+        kb = common_user_kb
     await message.answer(
         f'Вы успешно запустили бота MC Store!\nДобро пожаловать, *{message.from_user.first_name}*!',
         parse_mode=ParseMode.MARKDOWN,
@@ -229,10 +245,11 @@ async def cmd_start(message: types.Message):
 @dp.message(F.text.lower() == 'создать карту')
 async def btn_create_card(message: types.Message):
     acc = Account.get_acc(message.from_user.id)
+    pool = Account.get_prof(message.from_user.id)
     if acc:
         card_id = Account.create_card(message.from_user.id)
         if card_id:
-            await message.answer(f'Карта успешно создана\n*ID карты:* {card_id}', parse_mode=ParseMode.MARKDOWN)
+            await message.answer(f'Карта успешно создана\n*ID карты:* {card_id}\nСтоимость: {pool["count_cards"] * 5}', parse_mode=ParseMode.MARKDOWN)
             await bot.send_message(
                 "-1002480162505",
                 f'ID карты: {card_id}\nПользователь: {message.from_user.first_name}\nID пользователя: {message.from_user.id}',
@@ -324,7 +341,7 @@ async def cb_card(call: types.CallbackQuery):
         kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Назад', callback_data='back')]])
         await call.message.edit_text(
             f'*Информация о карте* {card_id}\n\n'
-            f'Баланс: {int(pool["balance"]) % 64} ст. {int(pool["balance"]) % 64}\n'
+            f'Баланс: {int(pool["balance"]) // 64} ст. {int(pool["balance"]) % 64}\n'
             f'Последние транзакции: {pool["last_transactions"]}\n'
             f'Количество транзакций: {pool["count_transactions"]}\n'
             f'Пользователь: {user}\n',
@@ -342,7 +359,7 @@ async def cb_card(call: types.CallbackQuery):
             kb = InlineKeyboardMarkup(inline_keyboard=kb)
             await call.message.edit_text(
                 f'*Профиль пользователя* {call.from_user.first_name}\n\n'
-                f'Баланс: {int(prof["balance"]) % 64} ст. {int(prof["balance"]) % 64}\n'
+                f'Баланс: {int(prof["balance"]) // 64} ст. {int(prof["balance"]) % 64}\n'
                 f'Количество карт: {prof["count_cards"]}\n'
                 f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
                 f'Роль: {prof["role"]}\n',
@@ -365,7 +382,7 @@ async def cmd_server(message: types.Message):
     if Account.get_prof(message.from_user.id)['role'] in ['admin', 'bank', 'stuff']:
         pool = Account.get_prof('server')
         await message.answer(
-            f'Баланс сервера: {int(pool["balance"]) % 64} ст. {int(pool["balance"]) % 64}'
+            f'Баланс сервера: {int(pool["balance"]) // 64} ст. {int(pool["balance"]) % 64}'
         )
     else:
         message.answer('Недостаточно прав доступа')
@@ -439,10 +456,11 @@ async def cmd_activate(message: types.Message):
 @dp.message(Command("создать_карту", "make_card"))
 async def cmd_create_card(message: types.Message):
     acc = Account.get_acc(message.from_user.id)
+    pool = Account.get_prof(message.from_user.id)
     if acc:
         card_id = Account.create_card(str(message.from_user.id))
         if card_id:
-            await message.answer(f'Карта успешно создана\n*ID карты:* {card_id}', parse_mode=ParseMode.MARKDOWN)
+            await message.answer(f'Карта успешно создана\n*ID карты:* {card_id}\nСтоимость: {pool["count_cards"] * 5}', parse_mode=ParseMode.MARKDOWN)
             await bot.send_message(
                 "-1002480162505",
                 f'ID карты: {card_id}\nПользователь: {message.from_user.first_name}\nID пользователя: {message.from_user.id}',
@@ -479,12 +497,22 @@ async def cmd_bank_info(message: types.Message):
     ars = message.text.split(' ')
     if len(ars) == 2 and ars[-1].isdigit():
         pool = Bank.trans_info(ars[-1])
-        await message.reply(
-            f"*От кого:* {pool['from']}\t{pool['from_card']}\n"
-            f"*Кому:*    {pool['to']}\t{pool['to_card']}\n"
-            f"*Сумма:*   {pool['amount']} АР\n"
-            f"*Сообщение:* {pool['message']}"
-        )
+        if pool and Account.get_prof(message.from_user.id)['role'] in ['bank', 'admin']:
+            await message.reply(
+                f"*От кого:* {pool['from']}\t{pool['from_card']}\n"
+                f"*Кому:*    {pool['to']}\t{pool['to_card']}\n"
+                f"*Сумма:*   {pool['amount']} АР\n"
+                f"*Сообщение:* {pool['message']}"
+            )
+        elif pool and Account.get_prof(message.from_user.id)['name'] in [pool['from'], pool['to']]:
+            await message.reply(
+                f"*От кого:* {pool['from']}\t{pool['from_card']}\n"
+                f"*Кому:*    {pool['to']}\t{pool['to_card']}\n"
+                f"*Сумма:*   {pool['amount']} АР\n"
+                f"*Сообщение:* {pool['message']}"
+            )
+        else:
+            await message.answer('Недостаточно прав доступа')
     else:
         await message.answer('Введите номер транзакции!')
 
@@ -524,7 +552,7 @@ async def cmd_trans(message: types.Message):
         amount = ars[-1]
         messg = ''
         if len(ars) == 5: messg = ars[3]
-        tr = Bank.top_up('z', get_card(ars[2]), messg, amount, 'адм.перевод')
+        tr = Bank.top_up('казна', get_card(ars[2]), messg, amount, 'адм.перевод')
 
         if tr:
             await message.answer(f'Перевод осуществлен успешно. Транзакция №{tr}')
@@ -565,29 +593,83 @@ async def cmd_trans(message: types.Message):
         else:
             await message.answer('Произошла ошибка')
 
+
+pending_penalty = {}
+
 @dp.message(Command('штраф', 'penalty'))
-async def cmd_shtraf(message: types.Message):
-
-    ars = message.text.split()
-
+async def cmd_penalty(message: types.Message):
+    # Доступно только админам и банкирам
     if Account.get_prof(message.from_user.id)['role'] not in ['admin', 'bank']:
-        await message.answer('Недостаточно прав доступа')
+        await message.answer("Недостаточно прав доступа для наложения штрафа.")
+        return
+    user_id = message.from_user.id
+    pending_penalty[user_id] = {"step": "input_target"}
+    await message.answer("Введите gamename пользователя для наложения штрафа:")
 
-    if len(ars) < 2: await message.answer('/штраф gamename [message] [amount]\nКомментарий к штрафу опционален')
-    elif len(ars) > 4: await message.answer('/штраф gamename [message] [amount]\nКомментарий к штрафу опционален')
+@dp.message(lambda m: m.from_user.id in pending_penalty and pending_penalty[m.from_user.id]["step"] == "input_target")
+async def penalty_input_target(message: types.Message):
+    user_id = message.from_user.id
+    pending_penalty[user_id]["target"] = message.text.strip()
+    pending_penalty[user_id]["step"] = "comment_decision"
+    # Клавиатура для выбора да/нет для комментария
+    decision_buttons = [[KeyboardButton(text="Да")], [KeyboardButton(text="Нет")]]
+    kb = ReplyKeyboardMarkup(keyboard=decision_buttons, resize_keyboard=True, one_time_keyboard=True)
+    await message.answer("Хотите добавить комментарий к штрафу? (Введите 'Да' или 'Нет')", reply_markup=kb)
+
+@dp.message(lambda m: m.from_user.id in pending_penalty and pending_penalty[m.from_user.id]["step"] == "comment_decision")
+async def penalty_comment_decision(message: types.Message):
+    user_id = message.from_user.id
+    decision = message.text.strip().lower()
+    if decision == "да":
+        pending_penalty[user_id]["step"] = "input_comment"
+        await message.answer("Введите комментарий к штрафу:", reply_markup=types.ReplyKeyboardRemove())
+    elif decision == "нет":
+        pending_penalty[user_id]["comment"] = ""
+        pending_penalty[user_id]["step"] = "input_amount"
+        await message.answer("Введите сумму штрафа:", reply_markup=types.ReplyKeyboardRemove())
     else:
+        await message.answer("Пожалуйста, введите 'Да' или 'Нет'.")
 
-        amount = ars[-1]
-        messge = ars[2] if len(ars) == 4 else ''
+@dp.message(lambda m: m.from_user.id in pending_penalty and pending_penalty[m.from_user.id]["step"] == "input_comment")
+async def penalty_input_comment(message: types.Message):
+    user_id = message.from_user.id
+    pending_penalty[user_id]["comment"] = message.text.strip()
+    pending_penalty[user_id]["step"] = "input_amount"
+    await message.answer("Введите сумму штрафа:")
 
-        tr = Bank.top_up(get_card(ars[1]), 'z', messge, amount, 'Штраф')
-        if tr:
-            await message.answer(f'Пользователь был оштрафован на {amount}. Его баланс составляет {Account.get_prof(Account.get_acc_by_name(ars[1][1::])["user_id"])["balance"]}')
-            await bot.send_message(Account.get_acc_by_name(ars[1][1::])['user_id'], f'Вы были оштрафованы на {amount}')
-        else:
-            await message.answer(f'Возникла ошибка')
-        
-
+@dp.message(lambda m: m.from_user.id in pending_penalty and pending_penalty[m.from_user.id]["step"] == "input_amount")
+async def penalty_input_amount(message: types.Message):
+    user_id = message.from_user.id
+    try:
+        amount = int(message.text.strip())
+        if amount <= 0:
+            await message.answer("Сумма штрафа должна быть больше 0. Введите корректную сумму:")
+            return
+    except ValueError:
+        await message.answer("Введите число для суммы штрафа:")
+        return
+    pending_penalty[user_id]["amount"] = amount
+    data = pending_penalty.pop(user_id)
+    target_input = data.get("target")
+    comment = data.get("comment", "")
+    # Определяем карту штрафуемого пользователя по gamename
+    target_card = get_card(target_input)
+    if not target_card:
+        await message.answer("Неверные данные получателя. Операция отменена.")
+        return
+    # Для штрафа сумма передается со знаком минус (снимаем деньги)
+    penalty_amount = amount
+    tr = Bank.top_up(target_card, 'казна', comment, penalty_amount, 'Штраф')
+    if tr:
+        await message.answer(f"Штраф наложен успешно. Транзакция №{tr}")
+        # Отправляем уведомление штрафуемому пользователю (если данные доступны)
+        if target_input.startswith('.'):
+            penalized = Account.get_acc_by_name(target_input[1:])
+            if penalized:
+                await bot.send_message(penalized['user_id'], f"Вам был наложен штраф на {amount} АР.\nКомментарий: {comment}")
+        await bot.send_message(GROUP_ID, f'ШТРАФ\nИсполнитель: {Account.get_prof(message.from_user.id)["name"]}\nПолучатель: {target_input[1:]}\nСумма: {amount}', message_thread_id=8)
+    else:
+        await message.answer("Произошла ошибка при наложении штрафа.")
 
 @dp.message(Command('начать_работу', 'begin'))
 async def start_work(message: types.Message):
@@ -641,15 +723,14 @@ async def stop_work(message: types.Message):
         await message.reply("Время работы ограничено 12 часами. Остаток времени не засчитывается.")
     earnings = math.ceil(worked_hours * PAY_RATE)
     await message.reply(f"Вы отработали {worked_hours:.2f} часов.")
-    if Bank.top_up('z', Account.get_prof(message.from_user.id)['main_card'], '', earnings, 'Зарплата'):
+    if Bank.top_up('казна', Account.get_prof(message.from_user.id)['main_card'], '', earnings, 'Зарплата'):
         await message.answer(f'Вам выплачено: {earnings} АР')
         await bot.send_message(GROUP_ID, f"Пользователь {message.from_user.full_name} (@{message.from_user.username}) закончил работу.\nЗаработано: {earnings} AR.", message_thread_id = 11)
     else:
         await message.answer('Возникла ошибка')
 
     # Клавиатура как при команде /start
-    kb = start_keyboard
-    await message.answer("Рабочая сессия завершена.", reply_markup=kb)
+    await message.answer("Рабочая сессия завершена.")
 
 @dp.message(F.text.lower() == 'завершить работу')
 async def stop_work(message: types.Message):
@@ -666,13 +747,16 @@ async def stop_work(message: types.Message):
         await message.reply("Время работы ограничено 12 часами. Остаток времени не засчитывается.")
     earnings = math.ceil(worked_hours * PAY_RATE)
     await message.reply(f"Вы отработали {worked_hours:.2f} часов.")
-    if Bank.top_up('z', Account.get_prof(message.from_user.id)['main_card'], '', earnings, 'Зарплата'):
+    if Bank.top_up('казна', Account.get_prof(message.from_user.id)['main_card'], '', earnings, 'Зарплата'):
         await message.answer(f'Вам выплачено: {earnings} АР')
         await bot.send_message(GROUP_ID, f"Пользователь {message.from_user.full_name} (@{message.from_user.username}) закончил работу.\nЗаработано: {earnings} AR.", message_thread_id = 11)
     else:
         await message.answer('Возникла ошибка')
+    role = Account.get_prof(message.from_user.id)['role']
 
-@dp.message(Command('status', 'статус'))
+    await message.answer("Рабочая сессия завершена.")
+
+@dp.message(Command('status'))
 async def work_status(message: types.Message):
     user_id = message.from_user.id
     if user_id in users_data:
@@ -683,8 +767,8 @@ async def work_status(message: types.Message):
     else:
         await message.reply("Вы не начали работу. Используйте 'Начать работу'.")
 
-@dp.message(F.text.lower() == 'Статус')
-async def work_status(message: types.Message):
+@dp.message(F.text.lower() == 'статус')
+async def work_statuss(message: types.Message):
     user_id = message.from_user.id
     if user_id in users_data:
         start_time = users_data[user_id]
@@ -703,7 +787,7 @@ async def request_report(message: types.Message):
     waiting_for_video[user_id] = True
     await message.reply("Пожалуйста, отправьте видео для отчета. Видео без нажатия на кнопку не принимаются!")
 
-@dp.message(F.text == "Отчет")
+@dp.message(F.text.lower() == "отчет")
 async def request_report(message: types.Message):
     user_id = message.from_user.id
     if user_id in banned_users:
@@ -723,8 +807,8 @@ async def handle_video(message: types.Message):
         return
     waiting_for_video[user_id] = False
     await message.reply("Ваше видео принято и передано админу. Ожидайте ответа!")
-    await bot.send_message(ADMIN_ID, f"Видео от @{message.from_user.username} ({user_id}):")
-    await bot.forward_message(ADMIN_ID, message.chat.id, message.message_id)
+    await bot.send_message(GROUP_ID, f"Видео от @{message.from_user.username} ({user_id}):", message_thread_id=20)
+    await bot.forward_message(GROUP_ID, message.chat.id, message.message_id, message_thread_id=20)
 
 @dp.message(lambda message: message.content_type in [
     "photo", "audio", "document", "sticker", "voice",
@@ -780,7 +864,7 @@ async def admin_stats(message: types.Message):
         stats_message += f"Пользователь: @{username} ({uid}) — {elapsed:.2f} часов\n"
     await bot.send_message(ADMIN_ID, stats_message)
 
-@dp.message(F.text.lower() == "Статистика")
+@dp.message(F.text.lower() == "статистика")
 async def admin_stats(message: types.Message):
     if message.from_user.id != ADMIN_ID:
         return
@@ -942,6 +1026,20 @@ def get_card2(value):
         return False
     return card_id
 
+@dp.message(F.text.lower() == 'пополнить')
+async def cmd_transfer(message: types.Message):
+    user_id = message.from_user.id
+    prof = Account.get_prof(user_id)
+    if not prof or not prof.get("cards"):
+        await message.answer("У вас нет карт для перевода.")
+        return
+    # Отправляем пользователю клавиатуру с кнопками — вариант: "Карта <card>"
+    if prof['role'] in ['admin', 'bank']: buttons = [[KeyboardButton(text=f"Карта z")]]
+    else: await message.answer('У вас недостаточно прав доступа')
+    kb = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True, one_time_keyboard=True)
+    pending_transfer[user_id] = {"step": "choose_card"}
+    await message.answer("Выберите карту для списания средств:", reply_markup=kb)
+
 @dp.message(lambda m: m.from_user.id in pending_transfer and pending_transfer[m.from_user.id]["step"] == "choose_card")
 async def transfer_choose_card(message: types.Message):
     user_id = message.from_user.id
@@ -950,7 +1048,10 @@ async def transfer_choose_card(message: types.Message):
         await message.answer("Пожалуйста, выберите карту, нажав одну из кнопок.")
         return
     card_value = text[len("Карта "):].strip()
-    card_id = get_card2(card_value)
+    if card_value == 'z':
+        card_id = 'казна'
+    else:
+        card_id = get_card2(card_value)
     if not card_id:
         await message.answer("Неверный формат карты. Повторите ввод.")
         return
@@ -1010,7 +1111,14 @@ async def transfer_input_comment(message: types.Message):
 @dp.message(lambda m: m.from_user.id in pending_transfer and pending_transfer[m.from_user.id]["step"] == "input_amount")
 async def transfer_input_amount(message: types.Message):
     user_id = message.from_user.id
-    kb = admin_keyboard if message.from_user.id == ADMIN_ID else start_keyboard
+    role = Account.get_prof(message.from_user.id)['role']
+
+    if role == "admin":
+        kb = admin_keyboard
+    elif role == "bank":
+        kb = banker_keyboard
+    else:
+        kb = common_user_kb
     try:
         amount = int(message.text.strip())
         if amount <= 0:
@@ -1026,6 +1134,8 @@ async def transfer_input_amount(message: types.Message):
     target_input = data.get("target")
     comment = data.get("comment", "")
     target_card = None
+
+    # Определяем полученную карту в зависимости от метода
     if method == "method_username":
         uid = Account.get_id_by_usn(target_input)
         if not uid:
@@ -1036,74 +1146,107 @@ async def transfer_input_amount(message: types.Message):
             await message.answer("Не удалось получить данные получателя. Операция отменена.", reply_markup=kb)
             return
         target_card = prof_target.get("main_card")
-
-    elif method == 'method_game':
+    elif method == "method_game":
         target_card = Account.get_prof(Account.get_acc_by_name(target_input)['user_id'])['main_card']
         uid = Account.get_acc_by_name(target_input)['user_id']
-    elif method == 'method_card':
+    elif method == "method_card":
         target_card = get_card2(target_input)
         uid = Bank.bank_info(target_card)['user']
     if not target_card:
         await message.answer("Неверные данные получателя. Операция отменена.", reply_markup=kb)
         return
+    prof = Account.get_prof(user_id)
+    # Проверяем, что ни одна из карт пользователя не имеет отрицательный баланс
+    if from_card != 'казна' and target_card not in prof.get("cards", []):
+       
+        for card in prof.get("cards", []):
+            card_info = Bank.bank_info(card)
+            if card_info and int(card_info['balance']) < 0:
+                await message.answer("На одной из ваших карт обнаружен отрицательный баланс. Перевод не разрешён.", reply_markup=kb)
+                return
+    
+
+    # Дополнительно проверяем баланс выбранной исходной карты
+    source_info = Bank.bank_info(from_card)
+    if not source_info:
+        await message.answer("Не удалось получить данные по исходной карте.", reply_markup=kb)
+        return
+    if int(source_info['balance']) < amount:
+        await message.answer("Недостаточно средств на исходной карте для перевода.", reply_markup=kb)
+        return
+
     tr = Bank.top_up(from_card, target_card, comment, amount, 'Перевод')
     if tr:
         await message.answer(f"Перевод осуществлен успешно. Транзакция №{tr}", reply_markup=kb)
-        await bot.send_message(uid, f'Вам поступил перевод от @{message.from_user.username} в размере {amount} АР\n {f"Комментарий отправителя: {comment}" if comment else "" }', )
+        await bot.send_message(uid, 
+            f'Вам поступил перевод от @{message.from_user.username} в размере {amount} АР\n' +
+            (f"Комментарий отправителя: {comment}" if comment else "") +
+            f'\nИсточник поступления: {"банк" if from_card == "казна" else from_card}')
         await bot.send_message(
-                "-1002480162505",
-                f'*Транзакция №{tr}*'
-                f'*Отправитель:*   {Account.get_prof(message.from_user.id)["name"]}'
-                f'\n*Получатель:*   {Account.get_prof(uid)["name"]}'
-                f'\n*Сумма:*        {amount}'
-                f'\n*Сообщение:*    {comment}',
-                message_thread_id=4,
-                parse_mode=ParseMode.MARKDOWN_V2
-            )
+            "-1002480162505",
+            f'*Транзакция №{tr}*'
+            f'\n*Отправитель:* {Account.get_prof(user_id)["name"]}\t {from_card}'
+            f'\n*Получатель:* {Account.get_prof(uid)["name"]}\t {target_card}'
+            f'\n*Сумма:* {amount}'
+            f'\n*Сообщение:* {comment}',
+            message_thread_id=4,
+            parse_mode=ParseMode.MARKDOWN_V2
+        )
     else:
-        await message.answer("Произошла ошибка при переводе.")
+        await message.answer("Произошла ошибка при переводе.", reply_markup=kb)
 
 @dp.message(lambda m: m.text.lower() == 'финансы')
 async def finances_handler(message: types.Message):
-    # Показать клавиатуру раздела "финансы"
-    await message.answer("Меню финансов", reply_markup=finances_kb)
+    prof = Account.get_prof(message.from_user.id)
+    # Если пользователь - банкир, показываем клавиатуру банкира, иначе стандартную для обычного пользователя
+    if prof and prof.get("role") == "bank":
+        await message.answer("Меню финансов (банкир)", reply_markup=banker_finances_kb)
+    else:
+        await message.answer("Меню финансов", reply_markup=finances_kb)
 
 @dp.message(lambda m: m.text.lower() == 'назад')
 async def back_handler(message: types.Message):
-    user_id = message.from_user.id
-    prof = Account.get_prof(user_id)
-    # Если роль админа или банка – вернуть админскую клавиатуру, иначе – обычное меню пользователя
-    if prof and prof.get("role") in ["admin", "bank"]:
-        await message.answer("Админ меню", reply_markup=admin_kb)
+    prof = Account.get_prof(message.from_user.id)
+    if prof:
+        role = prof.get("role")
+        if role == "admin":
+            kb = admin_keyboard
+        elif role == "bank":
+            kb = banker_keyboard
+        else:
+            kb = common_user_kb
     else:
-        await message.answer("Главное меню", reply_markup=common_user_kb)
+        kb = common_user_kb
+    await message.answer("Главное меню", reply_markup=kb)
 
 @dp.message(lambda m: m.text.lower() == 'юзер')
 async def user_handler(message: types.Message):
-    # Выводим дефолтную клавиатуру для обычных пользователей
-    await message.answer("Пользовательское меню", reply_markup=common_user_kb)
+    await message.answer("Пользовательское меню", reply_markup=adm_user_kb)
 
 @dp.message(lambda m: m.text.lower() == 'работа')
 async def work_handler(message: types.Message):
-    # Доступно только администраторам/банкам
-    if Account.get_prof(message.from_user.id).get("role") in ["admin", "bank"]:
-        await message.answer("Рабочее админ меню", reply_markup=admin_work_kb)
+    prof = Account.get_prof(message.from_user.id)
+    if prof and prof.get("role") in ["admin", "bank"]:
+        # Если банкир, показываем клавиатуру банкира, иначе админскую клавиатуру работы
+        if prof.get("role") == "bank":
+            await message.answer("Рабочее меню (банкир)", reply_markup=banker_work_kb)
+        else:
+            await message.answer("Рабочее меню", reply_markup=admin_work_kb)
     else:
         await message.answer("Недостаточно прав доступа.")
 
 @dp.message(lambda m: m.text.lower() == 'админ')
 async def admin_handler(message: types.Message):
-    # Отображаем клавиатуру админских действий
-    if Account.get_prof(message.from_user.id).get("role") in ["admin", "bank"]:
+    prof = Account.get_prof(message.from_user.id)
+    if prof and prof.get("role") in ["admin", "bank"]:
         await message.answer("Админ действия", reply_markup=admin_actions_kb)
     else:
         await message.answer("Недостаточно прав доступа.")
 
 @dp.message(lambda m: m.text.lower() == 'состояние')
 async def status_handler(message: types.Message):
-    # Здесь можно собрать данные о состоянии бота, сервера и соединения.
     active_users_count = len(users_data)
-    # Заглушки для статуса сервера и соединения. Замените на реальную логику при необходимости.
+    # Здесь можно добавить реальную логику для получения состояния сервера и соединения.
     server_status = "Online"
     connection_status = "Stable"
     status_text = (
@@ -1112,9 +1255,17 @@ async def status_handler(message: types.Message):
         f"Сервер: {server_status}\n"
         f"Соединение: {connection_status}"
     )
-    # Если админ, оставляем админскую клавиатуру, иначе – обычную
     prof = Account.get_prof(message.from_user.id)
-    kb = admin_actions_kb if prof and prof.get("role") in ["admin", "bank"] else common_user_kb
+    if prof:
+        role = prof.get("role")
+        if role == "admin":
+            kb = admin_actions_kb
+        elif role == "bank":
+            kb = banker_keyboard
+        else:
+            kb = common_user_kb
+    else:
+        kb = common_user_kb
     await message.answer(status_text, reply_markup=kb)
 
 async def main():

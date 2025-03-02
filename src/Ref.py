@@ -67,8 +67,8 @@ def activate_code(user_id: str, code: str) -> bool:
                 with open('data/codes.json', 'w', encoding = 'utf-8') as file_2:
                     json.dump(codes, file_2, ensure_ascii=False, indent=4)
 
-                if Bank.top_up('z', data[codes[code]['user_id']]['main_card'], '', 10, 'Активация приглашения') and\
-                Bank.top_up('z', data[user_id]['main_card'], '', 20, 'Активация приглашения'):
+                if Bank.top_up('казна', data[codes[code]['user_id']]['main_card'], '', 10, 'Активация приглашения') and\
+                Bank.top_up('казна', data[user_id]['main_card'], '', 20, 'Активация приглашения'):
                     return (codes[code]['user_id'])
                 else:
                     return False

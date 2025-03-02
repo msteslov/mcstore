@@ -1,21 +1,17 @@
 {
     "server": {
         "cards": [
-            "z"
+            "казна"
         ],
         "last_transactions": [
-            4,
-            21,
-            22,
-            26,
-            27,
-            28,
-            29,
-            2
+            1,
+            13,
+            14,
+            15
         ],
-        "count_transactions": 8,
-        "balance": 10003993976,
-        "main_card": "",
+        "count_transactions": 4,
+        "balance": 201,
+        "main_card": "казна",
         "role": "admin",
         "user": "server",
         "uuid": "0",
@@ -23,123 +19,117 @@
     },
     "1461832447": {
         "cards": [
-            "0000",
-            "0002",
-            "0003",
-            "0004",
-            "0012"
-        ],
-        "last_transactions": [
-            22,
-            15,
-            16,
-            16,
-            18,
-            20,
-            14,
-            15,
-            16,
-            16,
-            15,
-            6,
-            10,
-            11,
-            12,
-            12,
-            26,
-            27,
-            28,
-            2,
-            4
-        ],
-        "count_transactions": 43,
-        "balance": 1458,
-        "count_cards": 19,
-        "role": "admin",
-        "user": "ss8mmm",
-        "main_card": "0000",
-        "name": "tinterer",
-        "uuid": "qweqweqe",
-        "code": "hK3Zo",
-        "invites": 3,
-        "invited": 1
-    },
-    "813373727": {
-        "cards": [
-            "0005",
-            "0008",
-            "0010",
-            "0011"
-        ],
-        "last_transactions": [
-            18,
-            20,
-            21,
-            6,
-            10,
-            11,
-            14,
-            15
-        ],
-        "count_transactions": 8,
-        "balance": 499,
-        "count_cards": 4,
-        "role": "admin",
-        "user": "logikacode",
-        "main_card": "0005",
-        "uuid": "9678e464-8674-4896-a972-e89536f83602",
-        "name": "LogikaCode",
-        "code": "uL6MX",
-        "invites": 0,
-        "invited": 0
-    },
-    "5690683710": {
-        "cards": [],
-        "last_transactions": [],
-        "count_transactions": 0,
-        "balance": 0,
-        "count_cards": 0,
-        "role": "user",
-        "user": "cucumber_23",
-        "main_card": "0007",
-        "uuid": "2aeb4a97-e55e-4d4b-8248-2dfcf7439c03",
-        "name": "LEGAVUR",
-        "code": "Qsizc",
-        "invites": 0,
-        "invited": 0
-    },
-    "1138827235": {
-        "cards": [
-            "0006",
-            "0007"
-        ],
-        "last_transactions": [],
-        "count_transactions": 0,
-        "balance": -5,
-        "count_cards": 2,
-        "role": "user",
-        "user": "iglobruhs",
-        "main_card": "0006",
-        "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb",
-        "name": "Iglobruhs",
-        "code": "yHmm6",
-        "invites": 0,
-        "invited": 0
-    },
-    "1292320716": {
-        "cards": [
-            "0009"
+            "0000"
         ],
         "last_transactions": [],
         "count_transactions": 0,
         "balance": 0,
         "count_cards": 1,
+        "role": "bank",
+        "user": "ss8mmm",
+        "main_card": "0000",
+        "name": "tinterer",
+        "uuid": "qweqweqe",
+        "code": "hK3Zo",
+        "invites": 0,
+        "invited": 0
+    },
+    "813373727": {
+        "cards": [
+            "0002",
+            "0006"
+        ],
+        "last_transactions": [
+            13,
+            1,
+            2,
+            3,
+            7,
+            11
+        ],
+        "count_transactions": 6,
+        "balance": 81,
+        "count_cards": 2,
+        "role": "admin",
+        "user": "logikacode",
+        "main_card": "0002",
+        "uuid": "9678e464-8674-4896-a972-e89536f83602",
+        "name": "LogikaCode",
+        "code": "jqfIn",
+        "invites": 0,
+        "invited": 0,
+        "trans_limit": 192,
+        "bank_premium": 0
+    },
+    "1249497528": {
+        "cards": [
+            "0003",
+            "0007"
+        ],
+        "last_transactions": [
+            2,
+            4,
+            5,
+            7,
+            14
+        ],
+        "count_transactions": 5,
+        "balance": -100,
+        "count_cards": 2,
         "role": "user",
-        "user": "nelifs",
+        "user": "namsarr1",
+        "main_card": "0003",
+        "uuid": "6e2f9a59-70bd-4b92-8f2b-5c6072ab9e96",
+        "name": "namsarr1",
+        "code": "qlsM6",
+        "invites": 0,
+        "invited": 0,
+        "trans_limit": 192,
+        "bank_premium": 0
+    },
+    "6603471853": {
+        "cards": [
+            "0004",
+            "0005"
+        ],
+        "last_transactions": [
+            3,
+            4,
+            5,
+            12,
+            15
+        ],
+        "count_transactions": 5,
+        "balance": -90,
+        "count_cards": 2,
+        "role": "user",
+        "user": "etopizdesblin",
+        "main_card": "0004",
+        "uuid": "95a5f240-aca7-4c57-bd9e-f3e787971ec4",
+        "name": "piskotryas115",
+        "code": "OJm4v",
+        "invites": 0,
+        "invited": 0,
+        "trans_limit": 192,
+        "bank_premium": 0
+    },
+    "1138827235": {
+        "cards": [
+            "0009"
+        ],
+        "last_transactions": [
+            11,
+            12
+        ],
+        "count_transactions": 2,
+        "balance": 0,
+        "count_cards": 1,
+        "role": "user",
+        "user": "iglobruhs",
         "main_card": "0009",
-        "uuid": "14b7e279-30a3-4beb-a85d-96d24fcaf1a0",
-        "name": "nelifs",
-        "code": "MMyR5",
+        "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb",
+        "name": "Iglobruhs",
+        "code": "WNn57",
         "invites": 0,
         "invited": 0,
         "trans_limit": 192,
