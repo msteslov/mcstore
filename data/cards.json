@@ -34,30 +34,32 @@
         "uuid": "qweqweqe"
     },
     "0002": {
-        "balance": 81,
+        "balance": 49,
         "last_transactions": [
             13,
+            16,
             1,
             2,
             3,
             7,
             11
         ],
-        "count_transactions": 6,
+        "count_transactions": 7,
         "user": "813373727",
         "name": "LogikaCode",
         "uuid": "9678e464-8674-4896-a972-e89536f83602"
     },
     "0003": {
-        "balance": -100,
+        "balance": -90,
         "last_transactions": [
+            18,
             2,
             4,
             5,
             7,
             14
         ],
-        "count_transactions": 5,
+        "count_transactions": 6,
         "user": "1249497528",
         "name": "",
         "uuid": "6e2f9a59-70bd-4b92-8f2b-5c6072ab9e96"
@@ -109,12 +111,22 @@
         "uuid": "qweqweqe"
     },
     "0009": {
-        "balance": 0,
+        "balance": 17,
         "last_transactions": [
             11,
-            12
+            12,
+            16,
+            18
         ],
-        "count_transactions": 2,
+        "count_transactions": 4,
+        "user": "1138827235",
+        "name": "",
+        "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb"
+    },
+    "0010": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
         "user": "1138827235",
         "name": "",
         "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb"
