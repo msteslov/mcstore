@@ -1,19 +1,249 @@
 {
     "казна": {
-        "balance": 10003992200,
+        "balance": 10003992345,
         "last_transactions": [
+            33,
+            34,
+            35,
+            37,
+            38,
+            23,
+            24,
+            30,
+            31,
+            32,
+            1,
+            2,
+            7,
+            9,
+            18
         ],
-        "count_transactions": 56,
+        "count_transactions": 15,
         "user": "server",
         "name": "server",
         "uuid": "000"
     },
     "0000": {
-        "balance": 0,
-        "last_transactions": [],
-        "count_transactions": 0,
+        "balance": 1,
+        "last_transactions": [
+            25,
+            26,
+            30
+        ],
+        "count_transactions": 3,
         "user": "1461832447",
         "name": "tinterer",
         "uuid": "qweqweqe"
+    },
+    "0002": {
+        "balance": 10,
+        "last_transactions": [
+            9,
+            11,
+            19,
+            21
+        ],
+        "count_transactions": 4,
+        "user": "1138827235",
+        "name": "",
+        "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb"
+    },
+    "0003": {
+        "balance": 29,
+        "last_transactions": [
+            1,
+            12,
+            32,
+            39
+        ],
+        "count_transactions": 4,
+        "user": "5269218012",
+        "name": "",
+        "uuid": "8df7d1d2-85bc-441a-ac26-315bc4c16206"
+    },
+    "0004": {
+        "balance": 123,
+        "last_transactions": [
+            29,
+            33,
+            34,
+            13,
+            24,
+            25,
+            26,
+            28
+        ],
+        "count_transactions": 8,
+        "user": "6603471853",
+        "name": "",
+        "uuid": "95a5f240-aca7-4c57-bd9e-f3e787971ec4"
+    },
+    "0005": {
+        "balance": 5,
+        "last_transactions": [
+            14
+        ],
+        "count_transactions": 1,
+        "user": "1781625609",
+        "name": "",
+        "uuid": "310488be-2b24-4554-873e-ce7186ab0f28"
+    },
+    "0006": {
+        "balance": 10,
+        "last_transactions": [
+            16
+        ],
+        "count_transactions": 1,
+        "user": "1077626035",
+        "name": "",
+        "uuid": "0207b4f1-ee4d-482d-a2d9-afec55f35d74"
+    },
+    "0007": {
+        "balance": 31,
+        "last_transactions": [
+            18,
+            31
+        ],
+        "count_transactions": 2,
+        "user": "5690683710",
+        "name": "",
+        "uuid": "2aeb4a97-e55e-4d4b-8248-2dfcf7439c03"
+    },
+    "0008": {
+        "balance": 47,
+        "last_transactions": [
+            28,
+            36,
+            16,
+            19,
+            20,
+            22,
+            22,
+            7,
+            11,
+            12,
+            13,
+            14
+        ],
+        "count_transactions": 12,
+        "user": "813373727",
+        "name": "",
+        "uuid": "9678e464-8674-4896-a972-e89536f83602"
+    },
+    "0009": {
+        "balance": 0,
+        "last_transactions": [
+            2,
+            8
+        ],
+        "count_transactions": 2,
+        "user": "1749616570",
+        "name": "",
+        "uuid": "4bdc8fc0-d0ec-4c33-962e-34f70982ac4d"
+    },
+    "0010": {
+        "balance": 221,
+        "last_transactions": [
+            20,
+            23,
+            35
+        ],
+        "count_transactions": 3,
+        "user": "1063964537",
+        "name": "",
+        "uuid": "162420cf-8c77-44d7-a868-594e774923b0"
+    },
+    "0011": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "7511382863",
+        "name": "",
+        "uuid": "8ff2fd4e-3072-430a-93aa-16e26c304d16"
+    },
+    "0012": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1749616570",
+        "name": "",
+        "uuid": "4bdc8fc0-d0ec-4c33-962e-34f70982ac4d"
+    },
+    "0013": {
+        "balance": 333,
+        "last_transactions": [
+            8,
+            21,
+            40
+        ],
+        "count_transactions": 3,
+        "user": "1749616570",
+        "name": "",
+        "uuid": "4bdc8fc0-d0ec-4c33-962e-34f70982ac4d"
+    },
+    "0014": {
+        "balance": 22,
+        "last_transactions": [
+            38,
+            39,
+            40
+        ],
+        "count_transactions": 3,
+        "user": "5269218012",
+        "name": "",
+        "uuid": "8df7d1d2-85bc-441a-ac26-315bc4c16206"
+    },
+    "0015": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "5269218012",
+        "name": "",
+        "uuid": "8df7d1d2-85bc-441a-ac26-315bc4c16206"
+    },
+    "0016": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1138827235",
+        "name": "",
+        "uuid": "659bb1cd-7c4a-456f-abf9-15e0dd1c6adb"
+    },
+    "0017": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "1781625609",
+        "name": "",
+        "uuid": "310488be-2b24-4554-873e-ce7186ab0f28"
+    },
+    "0018": {
+        "balance": 0,
+        "last_transactions": [],
+        "count_transactions": 0,
+        "user": "813373727",
+        "name": "",
+        "uuid": "9678e464-8674-4896-a972-e89536f83602"
+    },
+    "0019": {
+        "balance": 1,
+        "last_transactions": [
+            29
+        ],
+        "count_transactions": 1,
+        "user": "6603471853",
+        "name": "",
+        "uuid": "95a5f240-aca7-4c57-bd9e-f3e787971ec4"
+    },
+    "0020": {
+        "balance": 55,
+        "last_transactions": [
+            36,
+            37
+        ],
+        "count_transactions": 2,
+        "user": "1249497528",
+        "name": "",
+        "uuid": "6e2f9a59-70bd-4b92-8f2b-5c6072ab9e96"
     }
 }

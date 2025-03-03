@@ -234,7 +234,7 @@ def dostup(username):
     with open('data/account.json', 'r', encoding = 'utf-8') as file:
         data = json.load(file)
 
-    data[get_acc_by_name(username)['user_id']]['role'] = 'staf'
+    data[get_acc_by_name(username)['user_id']]['role'] = 'stuff'
 
     with open('data/account.json', 'w', encoding = 'utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent = 4)
