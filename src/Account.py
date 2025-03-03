@@ -114,6 +114,7 @@ def create_acc(name, uuid, user_id, username):
     if str(name) not in data:
         try:
             data[name] = GAMEACC_DEFAULT
+            data[name]['name'] = name
             data[name]["username"] = username
             data[name]["user_id"] = str(user_id)
             data[name]["uuid"] = uuid
@@ -192,7 +193,7 @@ def create_card(user_id: str) -> int:
             if Bank.bank_info(users[user_id]['main_card'])['balance'] < (len(users[user_id]['cards'])) * 5:
                 return 0
             else:
-                tr = Bank.top_up(users[user_id]['main_card'], 'казна', '', (len(users[user_id]['cards']) - 1) * 5, 'Покупка карты')
+                tr = Bank.top_up(users[user_id]['main_card'], 'казна', '', (len(users[user_id]['cards'])) * 5, 'Покупка карты')
 
                 if tr:
 
@@ -203,6 +204,8 @@ def create_card(user_id: str) -> int:
                     cards[id]['uuid'] = get_acc(user_id)['uuid']
                     cards[users[user_id]['main_card']]['balance'] -= (len(users[user_id]['cards']) - 1) * 5
                     users[user_id]['balance'] -= (len(users[user_id]['cards']) - 1) * 5
+                    cards['казна']['balance'] += (len(users[user_id]['cards']) - 1) * 5
+                    users['server']['balance'] += (len(users[user_id]['cards']) - 1) * 5
 
                     users[user_id]['count_cards'] += 1
 

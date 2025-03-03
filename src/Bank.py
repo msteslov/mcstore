@@ -113,4 +113,33 @@ def tups(amount):
 
     return True
 
+def withdraw(card_id, message, amount):
+    amount = int(amount)
+    with open('data/cards.json', 'r', encoding='utf-8') as file:
+        cards = json.load(file)
+    with open('data/account.json', 'r', encoding='utf-8') as file2:
+        users = json.load(file2)
+
+    # Регистрируем транзакцию, где отражается только снятие
+    tr = reg_transaction(card_id, card_id, cards[card_id]['user'], cards[card_id]['user'], amount, message, 'Снятие', 1)
+    if not tr:
+        return 0
+
+    cards[card_id]['balance'] -= amount
+    cards[card_id]['last_transactions'].insert(len(cards[card_id]['last_transactions']) % 5, tr)
+    cards[card_id]['count_transactions'] += 1
+
+    user = cards[card_id]['user']
+    users[user]['last_transactions'].insert(len(users[user]['last_transactions']) % 5, tr)
+    users[user]['count_transactions'] += 1
+    users[user]['balance'] -= amount
+
+    with open('data/cards.json', 'w', encoding='utf-8') as file:
+        json.dump(cards, file, ensure_ascii=False, indent=4)
+    with open('data/account.json', 'w', encoding='utf-8') as file2:
+        json.dump(users, file2, ensure_ascii=False, indent=4)
+
+    return tr
+
+
 

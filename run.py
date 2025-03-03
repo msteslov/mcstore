@@ -444,9 +444,9 @@ async def cmd_activate(message: types.Message):
             '\t/activate [ref_code]'
             'Нельзя вводить собственный код, также вы должны сыграть на сервере 5+ часов!'
             )
-    elif int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 >= 0 and\
+    elif int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 >= 5 and\
         Ref.activate_code(str(message.from_user.id), ars[1]) and\
-            int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 <= 100:
+            int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 <= 50:
         await message.answer(f'Реферальный код активирован! ')
 
     else:
@@ -667,7 +667,7 @@ async def penalty_input_amount(message: types.Message):
             penalized = Account.get_acc_by_name(target_input[1:])
             if penalized:
                 await bot.send_message(penalized['user_id'], f"Вам был наложен штраф на {amount} АР.\nКомментарий: {comment}")
-        await bot.send_message(GROUP_ID, f'ШТРАФ\nИсполнитель: {Account.get_prof(message.from_user.id)["name"]}\nПолучатель: {target_input[1:]}\nСумма: {amount}', message_thread_id=8)
+        await bot.send_message(GROUP_ID, f'ШТРАФ\nИсполнитель: {Account.get_prof(message.from_user.id)["name"]}\nПолучатель: {target_input[1:]}\nСумма: {amount}\nКомментарий: {comment}', message_thread_id=8)
     else:
         await message.answer("Произошла ошибка при наложении штрафа.")
 
@@ -1184,13 +1184,12 @@ async def transfer_input_amount(message: types.Message):
             f'\nИсточник поступления: {"банк" if from_card == "казна" else from_card}')
         await bot.send_message(
             "-1002480162505",
-            f'*Транзакция №{tr}*'
-            f'\n*Отправитель:* {Account.get_prof(user_id)["name"]}\t {from_card}'
-            f'\n*Получатель:* {Account.get_prof(uid)["name"]}\t {target_card}'
-            f'\n*Сумма:* {amount}'
-            f'\n*Сообщение:* {comment}',
-            message_thread_id=4,
-            parse_mode=ParseMode.MARKDOWN_V2
+            f'Транзакция №{tr}'
+            f'\nОтправитель: {Account.get_prof(user_id)["name"]}\t {from_card}'
+            f'\nПолучатель: {Account.get_prof(uid)["name"]}\t {target_card}'
+            f'\nСумма: {amount}'
+            f'\nСообщение: {comment}',
+            message_thread_id=4
         )
     else:
         await message.answer("Произошла ошибка при переводе.", reply_markup=kb)
@@ -1267,6 +1266,85 @@ async def status_handler(message: types.Message):
     else:
         kb = common_user_kb
     await message.answer(status_text, reply_markup=kb)
+
+# Новый глобальный словарь для сессий команды снятия средств
+pending_withdraw = {}
+
+@dp.message(Command('снять'))
+async def cmd_withdraw(message: types.Message):
+    # Команда доступна только для администраторов и банкиров
+    if Account.get_prof(message.from_user.id)['role'] not in ['admin', 'bank']:
+        await message.answer("Недостаточно прав доступа для снятия средств.")
+        return
+    user_id = message.from_user.id
+    pending_withdraw[user_id] = {"step": "input_target"}
+    await message.answer("Введите gamename пользователя, с которого нужно снять средства:")
+
+@dp.message(lambda m: m.from_user.id in pending_withdraw and pending_withdraw[m.from_user.id]["step"] == "input_target")
+async def withdraw_input_target(message: types.Message):
+    user_id = message.from_user.id
+    target_gamename = message.text.strip()
+    uid = Account.get_acc_by_name(target_gamename)
+    if not uid:
+        await message.answer("Неверный gamename. Операция отменена.")
+        pending_withdraw.pop(user_id, None)
+        return
+    pending_withdraw[user_id]["user_id"] = uid
+    pending_withdraw[user_id]["step"] = "choose_card"
+    # Получаем данные пользователя и его карты
+    prof_target = Account.get_prof(uid['user_id'])
+    if not prof_target or not prof_target.get("cards"):
+        await message.answer("У пользователя нет карт или не удалось получить данные.")
+        pending_withdraw.pop(user_id, None)
+        return
+    # Формируем клавиатуру для выбора карты
+    buttons = [[KeyboardButton(text=f"Карта {card}")] for card in prof_target["cards"]]
+    kb = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True, one_time_keyboard=True)
+    await message.answer("Выберите карту пользователя для снятия средств:", reply_markup=kb)
+
+@dp.message(lambda m: m.from_user.id in pending_withdraw and pending_withdraw[m.from_user.id]["step"] == "choose_card")
+async def withdraw_choose_card(message: types.Message):
+    user_id = message.from_user.id
+    text = message.text.strip()
+    if not text.startswith("Карта "):
+        await message.answer("Пожалуйста, нажмите на кнопку с нужной картой.")
+        return
+    card_value = text[len("Карта "):].strip()
+    pending_withdraw[user_id]["card"] = card_value
+    pending_withdraw[user_id]["step"] = "input_amount"
+    await message.answer("Введите сумму для снятия средств:", reply_markup=types.ReplyKeyboardRemove())
+
+@dp.message(lambda m: m.from_user.id in pending_withdraw and pending_withdraw[m.from_user.id]["step"] == "input_amount")
+async def withdraw_input_amount(message: types.Message):
+    user_id = message.from_user.id
+    try:
+        amount = int(message.text.strip())
+        if amount <= 0:
+            await message.answer("Сумма должна быть больше 0. Введите корректную сумму:")
+            return
+    except ValueError:
+        await message.answer("Введите число для суммы:")
+        return
+    data = pending_withdraw.pop(user_id)
+    target_card = data.get("card")
+    comment = data.get("comment", "")
+    # Вызов новой функции для снятия средств: деньги просто вычитаются с карты,
+    # без перевода на другую (например, 'казну')
+    tr = Bank.withdraw(target_card, comment, amount)
+    if tr:
+        await message.answer(f"Снятие средств выполнено успешно. Транзакция №{tr}")
+        uid = data.get("user_id")
+        await bot.send_message(uid['user_id'], f"С вашей карты {target_card} было снято {amount} АР командой /снять.")
+        await bot.send_message(
+            "-1002480162505",
+            f'Транзакция №{tr}'
+            f'\nВладелец/карта: {uid["name"]}\t {target_card}'
+            f'\nСумма: {amount}'
+            f'\nСообщение: {comment}',
+            message_thread_id=4
+        )
+    else:
+        await message.answer("Произошла ошибка при снятии средств.")
 
 async def main():
     await dp.start_polling(bot)
