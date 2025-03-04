@@ -15,6 +15,9 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.enums import ParseMode
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 logging.basicConfig(level=logging.INFO)
@@ -24,7 +27,7 @@ ADMIN_ID = 813373727  # Замените на ID создателя бота
 GROUP_ID = -1002480162505 #For logs
 IP_PORT = '213.171.17.87:25040' #address
 
-bot = Bot(token='7560882994:AAEnIP5PnGmNo0Wx03QwQIWZaMSs1zLUUkQ')  # текущий токен для aiogram
+bot = Bot(token=os.getenv('TOKEN'))  # текущий токен для aiogram
 dp = Dispatcher()
 
 users_data = {}          # Хранение времени начала работы (user_id -> datetime)
@@ -527,72 +530,6 @@ def get_card(value):
         card_id = value[1::]
     else: return False
     return card_id
-
-
-@dp.message(Command('перевести', 'trans'))
-async def cmd_trans(message: types.Message):
-    '''
-    /перевести [,card_id/empty] [.gamename/,card_id/@username] message amount
-    '''
-    ars = message.text.split(' ')
-    if int(ars[-1]) < 0:
-        await message.answer('Сумма должна быть больше 0!')
-        return
-    
-    fl1 = '-a' in ars
-    fl2 = '-e' in ars
-    fl3 = '-c' in ars
-
-    if (fl1 + fl2 + fl3) != 1:
-        await message.answer('Ошибка ввода!')
-        return
-
-    if Account.get_prof(message.from_user.id)['role'] in ['bank', 'admin'] and fl1:
-
-        amount = ars[-1]
-        messg = ''
-        if len(ars) == 5: messg = ars[3]
-        tr = Bank.top_up('казна', get_card(ars[2]), messg, amount, 'адм.перевод')
-
-        if tr:
-            await message.answer(f'Перевод осуществлен успешно. Транзакция №{tr}')
-
-    elif Account.get_prof(message.from_user.id)['role'] not in ['bank', 'admin'] and fl1:
-        await message.answer('Недостаточно прав доступа для осуществления этой команды!')
-        return 
-
-    elif fl2:
-        '''
-        /перевести -e to mssg amount
-        '''
-        messg = ''
-        if len(ars) == 5 and ars[2][0] in ',.@': messg = ars[3]
-        amount = ars[-1]
-
-        tr = Bank.top_up(Account.get_prof(message.from_user.id)['main_card'], get_card(ars[2]), messg, amount, 'Перевод')
-
-        if tr:
-            await message.answer(f'Перевод осуществлен успешно. Транзакция №{tr}')
-        else:
-            await message.answer('Произошла ошибка')
-
-    elif fl3:
-
-        '''
-        /перевести -c from_card to_card message amount
-        '''
-
-        messg = ''
-        if len(ars) == 6: messg = ars[4]
-        amount = ars[-1]
-
-        tr = Bank.top_up(get_card(ars[2]), get_card(ars[3]), messg, amount, 'Перевод')
-
-        if tr:
-            await message.answer(f'Перевод осуществлен успешно. Транзакция №{tr}')
-        else:
-            await message.answer('Произошла ошибка')
-
 
 pending_penalty = {}
 
