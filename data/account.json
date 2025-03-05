@@ -4,7 +4,13 @@
             "казна"
         ],
         "last_transactions": [
+            73,
+            75,
             63,
+            68,
+            69,
+            70,
+            72,
             46,
             50,
             52,
@@ -26,8 +32,8 @@
             9,
             18
         ],
-        "count_transactions": 21,
-        "balance": 142,
+        "count_transactions": 27,
+        "balance": 208,
         "main_card": "казна",
         "role": "admin",
         "user": "server",
@@ -71,9 +77,19 @@
             "0018"
         ],
         "last_transactions": [
+            79,
+            80,
+            81,
+            67,
+            68,
+            73,
+            74,
+            76,
             62,
             63,
             64,
+            65,
+            66,
             57,
             58,
             59,
@@ -100,8 +116,8 @@
             13,
             14
         ],
-        "count_transactions": 28,
-        "balance": 41,
+        "count_transactions": 38,
+        "balance": 0,
         "count_cards": 2,
         "role": "admin",
         "user": "logikacode",
@@ -109,7 +125,7 @@
         "uuid": "9678e464-8674-4896-a972-e89536f83602",
         "name": "LogikaCode",
         "code": "4ocZi",
-        "invites": 0,
+        "invites": 1,
         "invited": 0,
         "trans_limit": 192,
         "bank_premium": 0
@@ -174,7 +190,16 @@
             "0019"
         ],
         "last_transactions": [
+            74,
+            75,
+            77,
+            77,
+            78,
             48,
+            67,
+            71,
+            71,
+            72,
             29,
             29,
             33,
@@ -186,8 +211,8 @@
             26,
             28
         ],
-        "count_transactions": 11,
-        "balance": 126,
+        "count_transactions": 20,
+        "balance": 127,
         "count_cards": 2,
         "role": "stuff",
         "user": "etopizdesblin",
@@ -206,10 +231,12 @@
             "0017"
         ],
         "last_transactions": [
-            14
+            14,
+            65,
+            66
         ],
-        "count_transactions": 1,
-        "balance": 5,
+        "count_transactions": 3,
+        "balance": 0,
         "count_cards": 2,
         "role": "user",
         "user": "ISKANDINAVIAI",
@@ -227,10 +254,11 @@
             "0006"
         ],
         "last_transactions": [
-            16
+            16,
+            69
         ],
-        "count_transactions": 1,
-        "balance": 10,
+        "count_transactions": 2,
+        "balance": 30,
         "count_cards": 1,
         "role": "user",
         "user": "cherrybeen64",
@@ -239,7 +267,7 @@
         "name": "been64",
         "code": "GWLhE",
         "invites": 0,
-        "invited": 0,
+        "invited": 1,
         "trans_limit": 192,
         "bank_premium": 0
     },
@@ -273,14 +301,18 @@
         ],
         "last_transactions": [
             44,
+            76,
+            79,
+            80,
+            81,
             2,
             8,
             8,
             21,
             40
         ],
-        "count_transactions": 6,
-        "balance": 334,
+        "count_transactions": 10,
+        "balance": 340,
         "count_cards": 3,
         "role": "user",
         "user": "Various342",
@@ -321,9 +353,11 @@
         "cards": [
             "0011"
         ],
-        "last_transactions": [],
-        "count_transactions": 0,
-        "balance": 0,
+        "last_transactions": [
+            70
+        ],
+        "count_transactions": 1,
+        "balance": 128,
         "count_cards": 1,
         "role": "user",
         "user": "lolamake8",
