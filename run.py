@@ -461,10 +461,19 @@ async def cmd_activate(message: types.Message):
         if not ch1: await message.answer(f'Вы играли всего {int(get_mc.getstat(Account.get_prof(message.from_user.id)["uuid"], IP_PORT)) // 20 / 60 / 60} ч. Минимальное количество для получения вознаграждения - 5!')
         elif not ch2: await message.answer(f'Вы играли слишком много и теперь не можете получить вознаграждение как новичок(')
         else: 
+            print(ars[1])
             ch3 = Ref.activate_code(str(message.from_user.id), ars[1])
             if ch3:
                 await message.answer(f'Реферальный код активирован! Вы получили 20 АР!')
+                print(ars[1])
                 await bot.send_message(Ref.get_referal(ars[1]), f'Ваш код активировал @{message.from_user.username}. Вы получили 10 АР!')
+
+            else:
+                await message.answer('Возникла ошибка активации код. Возможные причины:\n'
+                                     '-Вы активируете свой код\n'
+                                     '-Проблемы сети и вам стоит попробовать позже\n'
+                                     '-Вы уже активировали реферальный код\n'
+                                     '-Возникла проблема при проверке валидности кода')
 
 
 @dp.message(Command("создать_карту", "make_card"))

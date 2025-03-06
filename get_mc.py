@@ -27,7 +27,7 @@ def auth(auth_code, IP_PORT):
 def getstat(UUID, IP_PORT):
 
     if UUID == 'qweqweqe':
-        return 6
+        return 6 * 20 * 3600
     
     channel = grpc.insecure_channel(IP_PORT)
     stub = stats_pb2_grpc.StatsStub(channel)
@@ -40,7 +40,7 @@ def getstat(UUID, IP_PORT):
         print('RPC Error:')
         print(' Code:', e.code())
         print(' Details:', e.details())
-        return
+        return False
     
     if response.HasField('stats'):
         player_info = response.stats
@@ -63,5 +63,6 @@ def getstat(UUID, IP_PORT):
     #         print("Ошибка: неизвестная ошибка")
     else:
         print("Получен пустой ответ")
+        return False
 
 
