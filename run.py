@@ -467,6 +467,8 @@ async def cmd_activate(message: types.Message):
                 await message.answer(f'Реферальный код активирован! Вы получили 20 АР!')
                 print(ars[1])
                 await bot.send_message(Ref.get_referal(ars[1]), f'Ваш код активировал @{message.from_user.username}. Вы получили 10 АР!')
+                await bot.send_message(GROUP_ID, f'Активация реферального кода\nПриглашенный: {Account.get_prof(message.from_user.id)["name"]}\nПригласивший: {Account.get_prof(Ref.get_referal(ars[1]))["name"]}', message_thread_id = 153)
+
 
             else:
                 await message.answer('Возникла ошибка активации код. Возможные причины:\n'
@@ -493,6 +495,28 @@ async def cmd_create_card(message: types.Message):
             await message.answer(f'У вас недостаточно средств, чтобы создать еще одну карту')
     else:
         await message.answer(f'Ошибка получения данных аккаунта')
+
+@dp.message(Command('удалить', 'delete'))
+async def cmd_delete(message: types.Message):
+    ars = message.text.split()
+    if len(ars) != 2: await message.answer('Формат команды:\n/delete [card_id]\nНельзя удалить карты с отрицательным балансом, главную карту, а также карты, непринадлежащие вам!')
+    else:
+        ch = Account.del_card(str(message.from_user.id), str(ars[-1]))
+        if ch:
+            if ch == -1:
+                await message.answer('Вы не можете удалить свою главную карту!!')
+                return
+            if ch == -2:
+                await message.answer('Вы не можете удалить чужую карту!!')
+                return
+            if ch == -3:
+                await message.answer('Вы не можете удалить карту с отрицательным балансом')
+                return
+
+            await message.answer(f'Карта {ars[-1]} успешно удалена!')
+
+        else:
+            await message.answer('Произошла ошибка удаления, обратитесь в поддержку!')
 
 @dp.message(Command("кард_инфо", 'card_info'))
 async def cmd_card_info(message: types.Message):

@@ -79,9 +79,9 @@ def activate_code(user_id: str, code: str) -> bool:
 
 def get_referal(code):
     with open('data/codes.json', 'r', encoding = 'utf-8') as file:
-        data = json.load(file[code])
+        data = json.load(file)
 
-    if data['user_id']:
-        return data['user_id']
+    if data[code]['user_id']:
+        return data[code]['user_id']
     else:
         return False
