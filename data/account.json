@@ -1,13 +1,16 @@
 {
     "server": {
         "cards": [
-            "казна"
+            "казна",
+            "Наличка"
         ],
         "last_transactions": [
+            118,
             100,
             108,
             114,
             115,
+            117,
             94,
             95,
             96,
@@ -44,8 +47,8 @@
             9,
             18
         ],
-        "count_transactions": 39,
-        "balance": 113,
+        "count_transactions": 41,
+        "balance": 111,
         "main_card": "казна",
         "role": "admin",
         "user": "server",
@@ -92,6 +95,9 @@
         "last_transactions": [
             113,
             114,
+            117,
+            118,
+            119,
             106,
             107,
             108,
@@ -153,7 +159,7 @@
             13,
             14
         ],
-        "count_transactions": 62,
+        "count_transactions": 65,
         "balance": 443,
         "count_cards": 3,
         "role": "admin",
