@@ -1402,5 +1402,41 @@
         "id": "_116",
         "status": 1,
         "message": ""
+    },
+    "117": {
+        "from": "serv",
+        "from_card": "Наличка",
+        "to": "LogikaCode",
+        "to_card": "0008",
+        "amount": 1,
+        "date": "date",
+        "type": "Перевод",
+        "id": "_117",
+        "status": 1,
+        "message": ""
+    },
+    "118": {
+        "from": "serv",
+        "from_card": "Наличка",
+        "to": "LogikaCode",
+        "to_card": "0008",
+        "amount": 1,
+        "date": "date",
+        "type": "Перевод",
+        "id": "_118",
+        "status": 1,
+        "message": ""
+    },
+    "119": {
+        "from": "LogikaCode",
+        "from_card": "0008",
+        "to": "LogikaCode",
+        "to_card": "0008",
+        "amount": 2,
+        "date": "date",
+        "type": "Снятие",
+        "id": "_119",
+        "status": 1,
+        "message": ""
     }
 }

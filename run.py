@@ -24,10 +24,11 @@ logging.basicConfig(level=logging.INFO)
 
 # Параметры бота и глобальные переменные (интеграция telebot-логики)
 ADMIN_ID = 813373727  # Замените на ID создателя бота
+DEV_ID = 1461832447
 GROUP_ID = -1002480162505 #For logs
 IP_PORT = '213.171.17.87:25040' #address
 
-bot = Bot(token=os.getenv('TOKEN'))  # текущий токен для aiogram
+bot = Bot(token=os.getenv('token'))  # текущий токен для aiogram
 dp = Dispatcher()
 
 users_data = {}          # Хранение времени начала работы (user_id -> datetime)
@@ -295,10 +296,9 @@ async def btn_help(message: types.Message):
         '/создать_карту - создание карты\n'
         '/кард_инфо - информация о карте\n'
         '/помощь - помощь\n'
-        '/пополнить - перевод между своими картами\n'
         '/банк_инфо - информация транзакций\n'
-        'Также доступны команды рабочего процесса:\n'
-        '"Начать работу", "Завершить работу", "Статус", "Отчет", "Связь с админом"\n'
+        '/get_code - получить ваш реферальный код\n'
+        '/activate [code] - активировать реферальный код'
         )
 
 @dp.message(Command("проф", 'prof'))
@@ -322,7 +322,9 @@ async def cmd_prof(message: types.Message):
             f'Баланс: {int(prof["balance"]) // 64} ст. {int(prof["balance"]) % 64} \n'
             f'Количество карт: {prof["count_cards"]}\n'
             f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
-            f'Роль: {prof["role"]}\n',
+            f'Роль: {prof["role"]}\n'
+            f'Часов на сервере: {int(int(get_mc.getstat(Account.get_prof(user_id)["uuid"], IP_PORT)) // 20 / 60 / 60)}\n'
+            f'Пригласил: {prof["invites"]} чел.',
             parse_mode=ParseMode.MARKDOWN, reply_markup=kb
         )
     else:
@@ -331,7 +333,9 @@ async def cmd_prof(message: types.Message):
             f'Баланс: {int(prof["balance"]) % 64} ст.\n'
             f'Количество карт: {prof["count_cards"]}\n'
             f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
-            f'Роль: {prof["role"]}\n',
+            f'Роль: {prof["role"]}\n'
+            f'Часов на сервере: {int(int(get_mc.getstat(Account.get_prof(user_id)["uuid"], IP_PORT)) // 20 / 60 / 60)}\n'
+            f'Пригласил: {prof["invites"]} чел.',
             parse_mode=ParseMode.MARKDOWN
         )
 
@@ -365,7 +369,9 @@ async def cb_card(call: types.CallbackQuery):
                 f'Баланс: {int(prof["balance"]) // 64} ст. {int(prof["balance"]) % 64}\n'
                 f'Количество карт: {prof["count_cards"]}\n'
                 f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
-                f'Роль: {prof["role"]}\n',
+                f'Роль: {prof["role"]}\n'
+                f'Часов на сервере: {int(int(get_mc.getstat(Account.get_prof(call.from_user.id)["uuid"], IP_PORT)) // 20 / 60 / 60)}\n'
+                f'Пригласил: {prof["invites"]} чел.',
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=kb
             )
@@ -375,7 +381,9 @@ async def cb_card(call: types.CallbackQuery):
                 f'Баланс: {int(prof["balance"]) % 64} ст. {int(prof["balance"]) % 64}\n'
                 f'Количество карт: {prof["count_cards"]}\n'
                 f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
-                f'Роль: {prof["role"]}\n',
+                f'Роль: {prof["role"]}\n'
+                f'Часов на сервере: {int(int(get_mc.getstat(Account.get_prof(call.from_user.id)["uuid"], IP_PORT)) // 20 / 60 / 60)}\n'
+                f'Пригласил: {prof["invites"]} чел.',
                 parse_mode=ParseMode.MARKDOWN
             )
 
@@ -447,13 +455,16 @@ async def cmd_activate(message: types.Message):
             '\t/activate [ref_code]'
             'Нельзя вводить собственный код, также вы должны сыграть на сервере 5+ часов!'
             )
-    elif int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 >= 5 and\
-        Ref.activate_code(str(message.from_user.id), ars[1]) and\
-            int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 <= 50:
-        await message.answer(f'Реферальный код активирован! ')
-
     else:
-        await message.answer('Возникла ошибка!')
+        ch1 = int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 >= 5
+        ch2 = int(get_mc.getstat(Account.get_prof(message.from_user.id)['uuid'], IP_PORT)) // 20 / 60 / 60 <= 1000
+        if not ch1: await message.answer(f'Вы играли всего {int(get_mc.getstat(Account.get_prof(message.from_user.id)["uuid"], IP_PORT)) // 20 / 60 / 60} ч. Минимальное количество для получения вознаграждения - 5!')
+        elif not ch2: await message.answer(f'Вы играли слишком много и теперь не можете получить вознаграждение как новичок(')
+        else: 
+            ch3 = Ref.activate_code(str(message.from_user.id), ars[1])
+            if ch3:
+                await message.answer(f'Реферальный код активирован! Вы получили 20 АР!')
+                await bot.send_message(Ref.get_referal(ars[1]), f'Ваш код активировал @{message.from_user.username}. Вы получили 10 АР!')
 
 
 @dp.message(Command("создать_карту", "make_card"))
@@ -778,6 +789,8 @@ async def process_admin_message(message: types.Message):
     # Если это ответ на запрос "Связь с админом"
     await bot.send_message(ADMIN_ID,
                            f"📩 Сообщение от пользователя @{message.from_user.username} ({user_id}):\n\n{message.text}")
+    await bot.send_message(DEV_ID,
+                           f"📩 Сообщение от пользователя @{message.from_user.username} ({user_id}):\n\n{message.text}")
     await message.reply("Ваше сообщение отправлено администратору!")
     waiting_for_admin_message[user_id] = False
 
@@ -971,7 +984,7 @@ async def cmd_transfer(message: types.Message):
         await message.answer("У вас нет карт для перевода.")
         return
     # Отправляем пользователю клавиатуру с кнопками — вариант: "Карта <card>"
-    if prof['role'] in ['admin', 'bank']: buttons = [[KeyboardButton(text=f"Карта z")]]
+    if prof['role'] in ['admin', 'bank']: buttons = [[KeyboardButton(text=f"Карта z")], [KeyboardButton(text=f"Наличка")]]
     else: await message.answer('У вас недостаточно прав доступа')
     kb = ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True, one_time_keyboard=True)
     pending_transfer[user_id] = {"step": "choose_card"}
@@ -981,12 +994,15 @@ async def cmd_transfer(message: types.Message):
 async def transfer_choose_card(message: types.Message):
     user_id = message.from_user.id
     text = message.text.strip()
-    if not text.startswith("Карта "):
+    if not text.startswith("Карта ") and not text.startswith("Наличка"):
         await message.answer("Пожалуйста, выберите карту, нажав одну из кнопок.")
         return
-    card_value = text[len("Карта "):].strip()
+    if text.startswith('Карта'): card_value = text[len("Карта "):].strip()
+    if text.startswith('Наличка'): card_value = text
     if card_value == 'z':
         card_id = 'казна'
+    if card_value == 'Наличка':
+        card_id = 'Наличка'
     else:
         card_id = get_card2(card_value)
     if not card_id:
@@ -1010,9 +1026,30 @@ async def transfer_choose_method(message: types.Message):
     if method not in ['game', 'username', 'card']:
         await message.answer("Неверный метод. Введите: game, username или card.")
         return
+    
+    if method == 'game':
+        with open('data/gameacc.json', 'r', encoding = 'utf-8') as file:
+            data = json.load(file)
+        
+    if method == 'username':
+        with open('data/usernames.json', 'r', encoding = 'utf-8') as file:
+            data = json.load(file)
+
+    if method == 'card':
+        with open('data/cards.json', 'r', encoding = 'utf-8') as file:
+            data = json.load(file)
+
+    kb = []
+    qw = [i for i in data.keys()]
+
+    for i in range(2, len(data.keys())):
+        kb.append([KeyboardButton(text=f'{qw[i]}')])
+
+    kb = ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True, one_time_keyboard=True)
+
     pending_transfer[user_id]["method"] = "method_" + method
     pending_transfer[user_id]["step"] = "input_target"
-    await message.answer("Введите данные получателя (в зависимости от выбранного метода):", reply_markup=types.ReplyKeyboardRemove())
+    await message.answer("Введите данные получателя (в зависимости от выбранного метода):", reply_markup = kb)
 
 @dp.message(lambda m: m.from_user.id in pending_transfer and pending_transfer[m.from_user.id]["step"] == "input_target")
 async def transfer_input_target(message: types.Message):
