@@ -189,11 +189,12 @@ def create_card(user_id: str) -> int:
         id = '0' + id
 
     if id not in cards:
+        if len(users[user_id]['cards']) == 5: return False
         if users[user_id]['cards']: #if card not first
-            if Bank.bank_info(users[user_id]['main_card'])['balance'] < (len(users[user_id]['cards'])) * 5:
+            if Bank.bank_info(users[user_id]['main_card'])['balance'] < (len(users[user_id]['cards']) - 1) * 5:
                 return 0
             else:
-                tr = Bank.top_up(users[user_id]['main_card'], 'казна', '', (len(users[user_id]['cards'])) * 5, 'Покупка карты')
+                tr = Bank.top_up(users[user_id]['main_card'], 'казна', '', (len(users[user_id]['cards']) - 1) * 5, 'Покупка карты')
 
                 if tr:
 
@@ -254,4 +255,31 @@ def nedostup(username):
         json.dump(data, file, ensure_ascii=False, indent = 4)
 
     return True
+
+def del_card(user_id, card_id):
+
+    with open('data/account.json', 'r', encoding = 'utf-8') as file:
+        users = json.load(file)
+
+    with open('data/cards.json', 'r', encoding = 'utf-8') as file:
+        cards = json.load(file)
+
+    if not cards[card_id] and not users[user_id]:
+        return False
     
+    if card_id == users[user_id]['main_card']: return -1
+    if user_id != cards[card_id]['user']: return -2
+    if cards[card_id]['balance'] != 0: return -3
+
+    cards[card_id]['user'] = ''
+    cards[card_id]['name'] = ''
+    cards[card_id]['uuid'] = ''
+    users[user_id]['cards'].remove(card_id)
+    users[user_id]['count_cards'] -= 1
+
+    with open('data/account.json', 'w', encoding='utf-8') as file:
+        json.dump(users, file, ensure_ascii=False, indent=4)
+    with open('data/cards.json', 'w', encoding='utf-8') as file:
+        json.dump(cards, file, ensure_ascii=False, indent=4)
+
+    return True
