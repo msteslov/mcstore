@@ -118,9 +118,9 @@
             18
         ],
         "count_transactions": 58,
-        "user": "server",
+        "user": "bank",
         "name": "serv",
-        "uuid": "000"
+        "uuid": "b"
     },
     "0000": {
         "balance": 0,
@@ -140,6 +140,25 @@
         "user": "1461832447",
         "name": "tinterer",
         "uuid": "qweqweqe"
+    },
+    "0001": {
+        "balance": 0,
+        "last_transactions": [
+            46,
+            50,
+            52,
+            54,
+            134,
+            25,
+            26,
+            30,
+            41,
+            42
+        ],
+        "count_transactions": 10,
+        "user": "1749616570",
+        "name": "Various342",
+        "uuid": "4bdc8fc0-d0ec-4c33-962e-34f70982ac4d"
     },
     "0002": {
         "balance": 224,

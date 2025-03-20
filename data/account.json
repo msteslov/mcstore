@@ -1,4 +1,19 @@
 {
+    "bank": {
+        "cards": [
+            "Наличка"
+        ],
+        "last_transactions": [
+            120
+        ],
+        "count_transactions": 1,
+        "balance": 10003991311,
+        "main_card": "Наличка",
+        "role": "admin",
+        "user": "serve",
+        "uuid": "b",
+        "name": "serv"
+    },
     "server": {
         "cards": [
             "казна",
@@ -101,7 +116,7 @@
             42
         ],
         "count_transactions": 10,
-        "balance": 0,
+        "balance": 5,
         "count_cards": 5,
         "role": "admin",
         "user": "ss8mmm",
@@ -453,6 +468,7 @@
     },
     "1749616570": {
         "cards": [
+            "0001",
             "0009",
             "0012",
             "0013"
@@ -480,7 +496,7 @@
         "count_cards": 3,
         "role": "user",
         "user": "Various342",
-        "main_card": "0009",
+        "main_card": "0001",
         "uuid": "4bdc8fc0-d0ec-4c33-962e-34f70982ac4d",
         "name": "Various342",
         "code": "24z29",

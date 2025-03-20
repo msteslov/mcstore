@@ -272,7 +272,7 @@ async def btn_prof(message: types.Message):
         return
     profile_text = (
         f'*Профиль пользователя* {message.from_user.first_name}\n\n'
-f'Баланс: {math.floor(int(prof["balance"]) / 64) if int(prof["balance"]) > 0 else math.ceil(int(prof["balance"]) / 64)} ст. {(-(abs(int(prof["balance"])) % 64)) if int(prof["balance"]) < 0 else (int(prof["balance"]) % 64)}\n'
+        f'Баланс: {math.floor(int(prof["balance"]) / 64) if int(prof["balance"]) > 0 else math.ceil(int(prof["balance"]) / 64)} ст. {(-(abs(int(prof["balance"])) % 64)) if int(prof["balance"]) < 0 else (int(prof["balance"]) % 64)}\n'
         f'Количество карт: {prof["count_cards"]}\n'
         f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
         f'Роль: {prof["role"]}\n'
@@ -319,7 +319,7 @@ async def cmd_prof(message: types.Message):
         kb = InlineKeyboardMarkup(inline_keyboard=kb)
         await message.answer(
             f'*Профиль пользователя* {name}\n\n'
-            f'Баланс: {int(prof["balance"]) // 64} ст. {int(prof["balance"]) % 64} \n'
+            f'Баланс: {math.floor(int(prof["balance"]) / 64) if int(prof["balance"]) > 0 else math.ceil(int(prof["balance"]) / 64)} ст. {(-(abs(int(prof["balance"])) % 64)) if int(prof["balance"]) < 0 else (int(prof["balance"]) % 64)}\n'
             f'Количество карт: {prof["count_cards"]}\n'
             f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
             f'Роль: {prof["role"]}\n'
@@ -330,7 +330,7 @@ async def cmd_prof(message: types.Message):
     else:
         await message.answer(
             f'*Профиль пользователя* {name}\n\n'
-            f'Баланс: {int(prof["balance"]) % 64} ст.\n'
+            f'Баланс: {math.floor(int(prof["balance"]) / 64) if int(prof["balance"]) > 0 else math.ceil(int(prof["balance"]) / 64)} ст. {(-(abs(int(prof["balance"])) % 64)) if int(prof["balance"]) < 0 else (int(prof["balance"]) % 64)}\n'
             f'Количество карт: {prof["count_cards"]}\n'
             f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
             f'Роль: {prof["role"]}\n'
@@ -348,7 +348,7 @@ async def cb_card(call: types.CallbackQuery):
         kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Назад', callback_data='back')]])
         await call.message.edit_text(
             f'*Информация о карте* {card_id}\n\n'
-            f'Баланс: {int(pool["balance"]) // 64} ст. {int(pool["balance"]) % 64}\n'
+            f'Баланс: {math.floor(int(pool["balance"]) / 64) if int(pool["balance"]) > 0 else math.ceil(int(pool["balance"]) / 64)} ст. {(-(abs(int(pool["balance"])) % 64)) if int(pool["balance"]) < 0 else (int(pool["balance"]) % 64)}\n'
             f'Последние транзакции: {pool["last_transactions"]}\n'
             f'Количество транзакций: {pool["count_transactions"]}\n'
             f'Пользователь: {user}\n',
@@ -366,7 +366,7 @@ async def cb_card(call: types.CallbackQuery):
             kb = InlineKeyboardMarkup(inline_keyboard=kb)
             await call.message.edit_text(
                 f'*Профиль пользователя* {call.from_user.first_name}\n\n'
-                f'Баланс: {int(prof["balance"]) // 64} ст. {int(prof["balance"]) % 64}\n'
+                f'Баланс: {math.floor(int(prof["balance"]) / 64) if int(prof["balance"]) > 0 else math.ceil(int(prof["balance"]) / 64)} ст. {(-(abs(int(prof["balance"])) % 64)) if int(prof["balance"]) < 0 else (int(prof["balance"]) % 64)}\n'
                 f'Количество карт: {prof["count_cards"]}\n'
                 f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
                 f'Роль: {prof["role"]}\n'
@@ -378,7 +378,7 @@ async def cb_card(call: types.CallbackQuery):
         else:
             await call.message.edit_text(
                 f'*Профиль пользователя* {call.from_user.first_name}\n\n'
-                f'Баланс: {int(prof["balance"]) % 64} ст. {int(prof["balance"]) % 64}\n'
+                f'Баланс: {math.floor(int(prof["balance"]) / 64) if int(prof["balance"]) > 0 else math.ceil(int(prof["balance"]) / 64)} ст. {(-(abs(int(prof["balance"])) % 64)) if int(prof["balance"]) < 0 else (int(prof["balance"]) % 64)}\n'
                 f'Количество карт: {prof["count_cards"]}\n'
                 f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
                 f'Роль: {prof["role"]}\n'
@@ -393,7 +393,7 @@ async def cmd_server(message: types.Message):
     if Account.get_prof(message.from_user.id)['role'] in ['admin', 'bank', 'stuff']:
         pool = Account.get_prof('server')
         await message.answer(
-            f'Баланс сервера: {int(pool["balance"]) // 64} ст. {int(pool["balance"]) % 64}'
+            f'Баланс: {math.floor(int(pool["balance"]) / 64) if int(pool["balance"]) > 0 else math.ceil(int(pool["balance"]) / 64)} ст. {(-(abs(int(pool["balance"])) % 64)) if int(pool["balance"]) < 0 else (int(pool["balance"]) % 64)}\n'
         )
     else:
         message.answer('Недостаточно прав доступа')
@@ -435,6 +435,19 @@ async def cmd_access(message: types.Message):
     if Account.get_prof(message.from_user.id)['role'] == 'admin':
         if Account.nedostup(username):
             await message.answer(f'{username} утратил доступ')
+        else:
+            await message.answer('Возникла ошибка')
+
+@dp.message(Command('make', 'банкир'))
+async def cmd_banker(message: types.Message):
+
+    ars = message.text.split(' ')
+    if len(ars) != 2: await message.answer('/make [username]')
+    if ars[-1]: username = ars[-1]
+
+    if Account.get_prof(message.from_user.id)['role'] == 'admin':
+        if Account.dostup(username):
+            await message.answer(f'{username} стал банкиром')
         else:
             await message.answer('Возникла ошибка')
 

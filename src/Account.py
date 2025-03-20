@@ -245,6 +245,18 @@ def dostup(username):
 
     return True
 
+def banker(username):
+
+    with open('data/account.json', 'r', encoding = 'utf-8') as file:
+        data = json.load(file)
+
+    data[get_acc_by_name(username)['user_id']]['role'] = 'bank'
+
+    with open('data/account.json', 'w', encoding = 'utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent = 4)
+
+    return True
+
 def nedostup(username):
     with open('data/account.json', 'r', encoding = 'utf-8') as file:
         data = json.load(file)
@@ -255,6 +267,7 @@ def nedostup(username):
         json.dump(data, file, ensure_ascii=False, indent = 4)
 
     return True
+
 
 def del_card(user_id, card_id):
 
