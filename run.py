@@ -26,9 +26,9 @@ logging.basicConfig(level=logging.INFO)
 ADMIN_ID = 813373727  # Замените на ID создателя бота
 DEV_ID = 1461832447
 GROUP_ID = -1002480162505 #For logs
-IP_PORT = '213.171.17.87:25040' #address
+IP_PORT = '5.9.97.124:20706' #address
 
-bot = Bot(token=os.getenv('token'))  # текущий токен для aiogram
+bot = Bot(token=os.getenv('TOKEN'))  # текущий токен для aiogram
 dp = Dispatcher()
 
 users_data = {}          # Хранение времени начала работы (user_id -> datetime)
