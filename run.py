@@ -272,7 +272,7 @@ async def btn_prof(message: types.Message):
         return
     profile_text = (
         f'*Профиль пользователя* {message.from_user.first_name}\n\n'
-        f'Баланс: {int(prof["balance"]) // 64} ст. {int(prof["balance"]) % 64}\n'
+f'Баланс: {math.floor(int(prof["balance"]) / 64) if int(prof["balance"]) > 0 else math.ceil(int(prof["balance"]) / 64)} ст. {(-(abs(int(prof["balance"])) % 64)) if int(prof["balance"]) < 0 else (int(prof["balance"]) % 64)}\n'
         f'Количество карт: {prof["count_cards"]}\n'
         f'Количество совершеных транзакций: {prof["count_transactions"]}\n'
         f'Роль: {prof["role"]}\n'
@@ -1034,13 +1034,14 @@ async def transfer_choose_card(message: types.Message):
     if text.startswith('Наличка'): card_value = text
     if card_value == 'z':
         card_id = 'казна'
-    if card_value == 'Наличка':
+    elif card_value == 'Наличка':
         card_id = 'Наличка'
     else:
         card_id = get_card2(card_value)
     if not card_id:
         await message.answer("Неверный формат карты. Повторите ввод.")
         return
+
     pending_transfer[user_id]["from_card"] = card_id
     pending_transfer[user_id]["step"] = "choose_method"
     # Клавиатура для выбора метода перевода
