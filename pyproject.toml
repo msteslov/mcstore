@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcstore"
+version = "2.0.0"
+description = "A secure-by-design economy service for a Minecraft server with Telegram and gRPC integration."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Matvey Teslov" }]
+dependencies = [
+  "fastapi>=0.115,<1",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3",
+  "psycopg[binary]>=3.2,<4",
+  "sqlalchemy>=2.0,<3",
+  "uvicorn[standard]>=0.34,<1",
+]
+
+[project.optional-dependencies]
+bot = [
+  "aiogram>=3.17,<4",
+  "grpcio>=1.70,<2",
+  "protobuf>=5.29,<7",
+  "httpx>=0.28,<1",
+]
+dev = [
+  "grpcio-tools>=1.70,<2",
+  "httpx>=0.28,<1",
+  "pytest>=8.3,<9",
+  "pytest-cov>=6,<7",
+  "ruff>=0.9,<1",
+]
+
+[project.scripts]
+mcstore-api = "mcstore.api:run"
+mcstore-bot = "mcstore.bot:run"
+
+[tool.setuptools.packages.find]
+include = ["mcstore*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.coverage.run]
+source = ["mcstore"]
+omit = [
+  "mcstore/bot.py",
+  "mcstore/grpc_client.py",
+  "mcstore/grpc_generated/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true

@@ -1,0 +1,156 @@
+syntax = "proto3";
+import "auth.proto";
+
+package stats;
+
+option java_multiple_files = true;
+
+option java_package = "ru.skykatik.tgintegr.grpc";
+option java_outer_classname = "PlayersStatsProto";
+
+message PlayerStatsResponse {
+  enum ErrorType {
+    // такой игрок не появлялся на сервере
+    unknown_player = 0;
+  }
+
+  oneof body {
+    PlayerInfo stats = 1;
+    ErrorType error = 2;
+  }
+}
+
+// Статистика разрушения блоков
+message BlockStatEntry {
+  // ID блока вида minecraft:acacia_boat
+  string block_id = 1;
+  int32 count = 2;
+}
+
+enum BaseStat {
+  damage_dealt = 0;
+  damage_taken = 1;
+  deaths = 2;
+  mob_kills = 3;
+  player_kills = 4;
+  fish_caught = 5;
+  animals_bred = 6;
+  leave_game = 7;
+  jump = 8;
+  drop_count = 9;
+  play_one_minute = 12;
+  total_world_time = 13;
+  walk_one_cm = 14;
+  walk_on_water_one_cm = 15;
+  fall_one_cm = 16;
+  sneak_time = 17;
+  climb_one_cm = 18;
+  fly_one_cm = 19;
+  walk_under_water_one_cm = 20;
+  minecart_one_cm = 21;
+  boat_one_cm = 22;
+  pig_one_cm = 23;
+  horse_one_cm = 24;
+  sprint_one_cm = 25;
+  crouch_one_cm = 26;
+  aviate_one_cm = 27;
+  time_since_death = 34;
+  talked_to_villager = 35;
+  traded_with_villager = 36;
+  cake_slices_eaten = 37;
+  cauldron_filled = 38;
+  cauldron_used = 39;
+  armor_cleaned = 40;
+  banner_cleaned = 41;
+  brewingstand_interaction = 42;
+  beacon_interaction = 43;
+  dropper_inspected = 44;
+  hopper_inspected = 45;
+  dispenser_inspected = 46;
+  noteblock_played = 47;
+  noteblock_tuned = 48;
+  flower_potted = 49;
+  trapped_chest_triggered = 50;
+  enderchest_opened = 51;
+  item_enchanted = 52;
+  record_played = 53;
+  furnace_interaction = 54;
+  crafting_table_interaction = 55;
+  chest_opened = 56;
+  sleep_in_bed = 57;
+  shulker_box_opened = 58;
+  time_since_rest = 59;
+  swim_one_cm = 60;
+  damage_dealt_absorbed = 61;
+  damage_dealt_resisted = 62;
+  damage_blocked_by_shield = 63;
+  damage_absorbed = 64;
+  damage_resisted = 65;
+  clean_shulker_box = 66;
+  open_barrel = 67;
+  interact_with_blast_furnace = 68;
+  interact_with_smoker = 69;
+  interact_with_lectern = 70;
+  interact_with_campfire = 71;
+  interact_with_cartography_table = 72;
+  interact_with_loom = 73;
+  interact_with_stonecutter = 74;
+  bell_ring = 75;
+  raid_trigger = 76;
+  raid_win = 77;
+  interact_with_anvil = 78;
+  interact_with_grindstone = 79;
+  target_hit = 80;
+  interact_with_smithing_table = 81;
+  strider_one_cm = 82;
+}
+
+// Общая статистика
+message BaseStatEntry {
+  BaseStat type = 1;
+  int32 count = 2;
+}
+
+// Статистика связанная с конкретными предметами
+message ItemStatEntry {
+  ItemStat type = 1;
+  // ID предмета вида minecraft:iron_sword
+  string item_id = 2;
+  int32 count = 3;
+}
+
+enum ItemStat {
+  drop = 0;
+  pickup = 1;
+  use_item = 2;
+  break_item = 3;
+  craft_item = 4;
+}
+
+enum EntityStat {
+  kill_entity = 0;
+  entity_killed_by = 1;
+}
+
+message EntityStatEntry {
+  EntityStat type = 1;
+  // ID сущности вида minecraft:bee
+  string entity_id = 2;
+  int32 count = 3;
+}
+
+message PlayerInfo {
+  // Текущий никнейм игрока
+  string name = 1;
+  // Строковый UUID игрока
+  string uuid = 2;
+
+  repeated BaseStatEntry base_stats = 3;
+  repeated BlockStatEntry mine_stats = 4;
+  repeated EntityStatEntry entity_stats = 5;
+  repeated ItemStatEntry item_stats = 6;
+}
+
+service Stats {
+  rpc getInfo(PlayerId) returns (PlayerStatsResponse) {}
+}

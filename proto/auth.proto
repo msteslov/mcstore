@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package stats;
+
+option java_multiple_files = true;
+
+option java_package = "ru.skykatik.tgintegr.grpc";
+option java_outer_classname = "PlayersAuthProto";
+
+// Строковое представление UUID вида 0d1d0b31-73c7-445b-9ec1-c6ed28003df7
+message PlayerId {
+  string uuid = 1;
+}
+
+// Код авторизации. Просто строка
+message AuthCode {
+  string code = 1;
+}
+
+message AuthResponse {
+  enum Type {
+    // Всё получилось. Аккаунт привязан
+    success = 0;
+    // игрок не проходил авторизацию.
+    // Это может значить либо он уже авторизован, либо этот код не был сгенерирован плагином
+    // Либо же код устарел и требуется новый
+    unauthorized = 1;
+  }
+
+  message Player {
+    // Текущий юзернейм игрока
+    string name = 1;
+    // Его строковый UUID
+    string uuid = 2;
+  }
+
+  Type type = 1;
+  // если всё получилось, то вернёт никнейм игрока и его uuid
+  optional Player player = 2;
+}
+
+message UnlinkResponse {
+  enum Type {
+    // Успешно отвязали
+    success = 0;
+    // Игрок не привязывал себя к телеграм боту
+    not_linked = 1;
+  }
+
+  Type type = 1;
+}
+
+service Auth {
+  // Данный метод отменяет привязку аккаунта. Поскольку реализация полагается на UUID, то параметр это строковое представление UUID
+  rpc unlink(PlayerId) returns (UnlinkResponse) {}
+  // Эта функция позволяет связать по сгенерированному коду игрока и его аккаунт телеграм
+  rpc acceptCode(AuthCode) returns (AuthResponse) {}
+}
